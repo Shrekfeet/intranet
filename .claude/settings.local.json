@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(run)",
+      "Skill(run:*)",
+      "mcp__Claude_Preview__preview_start",
+      "PowerShell(\\(Get-Command npm\\).Source; \\(Get-Command node\\).Source)",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\nodejs\\\\npm.cmd\" -ErrorAction SilentlyContinue; Get-ChildItem \"C:\\\\Users\\\\harry\\\\AppData\\\\Roaming\\\\npm\\\\npm.cmd\" -ErrorAction SilentlyContinue; Get-ChildItem \"$env:APPDATA\\\\nvm\" -ErrorAction SilentlyContinue | Select-Object -First 5)",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\\" | Where-Object {$_.Name -match \"node|nvm|bun\"})",
+      "Bash(Get-Command npm *)",
+      "Bash(Select-Object -ExpandProperty Source)",
+      "Bash(command -v npm)",
+      "PowerShell(\\(Get-Command npm\\).Source)",
+      "PowerShell(Get-ChildItem \"$env:APPDATA\\\\npm\" -ErrorAction SilentlyContinue | Select-Object -First 5; Get-ChildItem \"$env:ProgramFiles\\\\nodejs\" -ErrorAction SilentlyContinue | Select-Object -First 5)",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\nodejs\" -ErrorAction SilentlyContinue | Select-Object Name -First 10; Get-ChildItem \"$env:LOCALAPPDATA\\\\Programs\" -ErrorAction SilentlyContinue | Where-Object { $_.Name -match 'node|bun' })",
+      "PowerShell(Get-ChildItem \"C:\\\\\" -ErrorAction SilentlyContinue | Where-Object { $_.Name -match 'node|bun' }; where.exe node 2>$null; where.exe bun 2>$null)",
+      "PowerShell($env:PATH -split ';' | Where-Object { $_ -match 'node|bun|npm' })",
+      "PowerShell($env:PATH -split ';')",
+      "PowerShell(Get-ChildItem \"$env:USERPROFILE\\\\.bun\\\\bin\" -ErrorAction SilentlyContinue | Select-Object Name -First 5)",
+      "PowerShell(Test-Path \"$env:USERPROFILE\\\\.bun\"; Get-ChildItem \"$env:USERPROFILE\" -ErrorAction SilentlyContinue | Where-Object { $_.Name -match 'node|bun|nvm' } | Select-Object Name)",
+      "PowerShell($env:PATH -split ';' | Where-Object { $_ -ne '' })",
+      "PowerShell(& \"C:\\\\Program Files\\\\nodejs\\\\npm.cmd\" install 2>&1)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\nodejs;\" + $env:PATH; npm install 2>&1 | Select-Object -Last 10)",
+      "PowerShell($env:PATH = \"C:\\\\Program Files\\\\nodejs;\" + $env:PATH; npm approve-scripts esbuild @swc/core 2>&1)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\harry\\\\Documents\\\\lawn-learners-hub-main\" -Directory)",
+      "Bash(Select-Object Name)"
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+@layer base {
+  :root {
+    /* Shrekfeet-inspired palette: clean white surfaces, vibrant lime/grass green primary */
+    --background: 40 20% 98.5%;
+    --foreground: 140 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 140 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 140 30% 15%;
+
+    /* Lime/grass green like the Shrekfeet hero button */
+    --primary: 88 50% 48%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 88 35% 94%;
+    --secondary-foreground: 140 30% 15%;
+
+    --muted: 90 15% 95%;
+    --muted-foreground: 140 10% 40%;
+
+    --accent: 88 55% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 90 12% 88%;
+    --input: 90 12% 88%;
+    --ring: 88 50% 48%;
+
+    /* Pill buttons & rounded cards like Shrekfeet */
+    --radius: 1.25rem;
+
+    /* Sidebar uses the brand green as the surface (matches their top bar) */
+    --sidebar-background: 88 50% 48%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 88 50% 48%;
+    --sidebar-accent: 88 55% 42%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 88 45% 40%;
+    --sidebar-ring: 0 0% 100%;
+
+    --success: 88 55% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 42 95% 55%;
+    --warning-foreground: 140 30% 15%;
+
+    --font-heading: 'Mulish', system-ui, sans-serif;
+    --font-body: 'Mulish', system-ui, sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+}
