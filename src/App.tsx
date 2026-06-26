@@ -25,6 +25,8 @@ import Dev from "./pages/Dev.tsx";
 import WelcomePack from "./pages/WelcomePack.tsx";
 import Login from "./pages/Login.tsx";
 import Admin from "./pages/Admin.tsx";
+import Suppliers from "./pages/Suppliers.tsx";
+import SeasonalCalendar from "./pages/SeasonalCalendar.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -45,7 +47,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename="/intranet">
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
@@ -69,6 +71,8 @@ const App = () => (
               <Route path="/dev" element={<Dev />} />
               <Route path="/welcome" element={<WelcomePack />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/suppliers" element={<Suppliers />} />
+              <Route path="/seasonal-calendar" element={<SeasonalCalendar />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

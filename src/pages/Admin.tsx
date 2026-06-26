@@ -90,8 +90,8 @@ const Admin = () => {
         {fetching ? (
           <p className="text-muted-foreground font-body">Loading progress…</p>
         ) : (
-          <div className="rounded-xl border overflow-hidden">
-            <table className="w-full text-sm font-body">
+          <div className="rounded-xl border overflow-x-auto">
+            <table className="w-full min-w-[480px] text-sm font-body">
               <thead>
                 <tr className="bg-muted/60 border-b">
                   <th className="text-left font-bold px-4 py-3">Name</th>

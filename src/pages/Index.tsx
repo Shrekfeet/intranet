@@ -23,6 +23,8 @@ const kindLabel: Record<WhatsNewKind, string> = {
   "lawn-id": "Lawn ID",
   policy: "Policies",
   scheduling: "Scheduling",
+  suppliers: "Suppliers",
+  calendar: "Calendar",
 };
 
 const kindColour: Record<WhatsNewKind, string> = {
@@ -31,6 +33,8 @@ const kindColour: Record<WhatsNewKind, string> = {
   "lawn-id": "bg-sky-100 text-sky-700",
   policy: "bg-violet-100 text-violet-700",
   scheduling: "bg-orange-100 text-orange-700",
+  suppliers: "bg-indigo-100 text-indigo-700",
+  calendar: "bg-emerald-100 text-emerald-700",
 };
 
 const hubs = [

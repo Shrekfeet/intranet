@@ -13,6 +13,8 @@ import {
   PartyPopper,
   Leaf,
   ShieldCheck,
+  Building2,
+  CalendarDays,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.ico";
@@ -41,6 +43,7 @@ const generalItems: SidebarItem[] = [
   { title: "Dashboard", url: "/", icon: Home, exact: true },
   { title: "Welcome Pack", url: "/welcome", icon: PartyPopper, exact: true },
   { title: "How-To Guides", url: "/how-to", icon: HelpCircle },
+  { title: "Seasonal Calendar", url: "/seasonal-calendar", icon: CalendarDays, exact: true },
   { title: "Scheduling Hub", url: "/scheduling", icon: Calendar, exact: true },
   { title: "Policies & Docs", url: "/policies", icon: FileText, exact: true },
 ];
@@ -51,6 +54,7 @@ const operationsItems: SidebarItem[] = [
 
 const knowledgeItems: SidebarItem[] = [
   { title: "Lawn ID", url: "/lawn-id", icon: Leaf, exact: true },
+  { title: "Supplier Directory", url: "/suppliers", icon: Building2, exact: true },
   { title: "Account Flags", url: "/account-flags", icon: Tag, exact: true },
   { title: "Condition Codes", url: "/condition-codes", icon: ClipboardList, exact: true },
   { title: "Terms & Disputes", url: "/terms", icon: Scale, exact: true },

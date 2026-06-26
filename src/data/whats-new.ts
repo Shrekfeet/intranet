@@ -1,4 +1,4 @@
-export type WhatsNewKind = "module" | "triage" | "lawn-id" | "policy" | "scheduling";
+export type WhatsNewKind = "module" | "triage" | "lawn-id" | "policy" | "scheduling" | "suppliers" | "calendar";
 
 export interface WhatsNewItem {
   id: string;
@@ -10,6 +10,22 @@ export interface WhatsNewItem {
 }
 
 export const whatsNew: WhatsNewItem[] = [
+  {
+    id: "wn-suppliers",
+    date: "2026-06-26",
+    kind: "suppliers",
+    title: "Supplier Directory launched",
+    description: "All 36 active suppliers with contacts, payment terms and service details — searchable and filterable by category.",
+    href: "/suppliers",
+  },
+  {
+    id: "wn-seasonal-calendar",
+    date: "2026-06-26",
+    kind: "calendar",
+    title: "Seasonal Treatment Calendar added",
+    description: "Month-by-month lawn care programme for Hampshire, Berkshire, West Sussex and Surrey — with this month's focus highlighted.",
+    href: "/seasonal-calendar",
+  },
   {
     id: "wn-lawn-id",
     date: "2025-04-20",
