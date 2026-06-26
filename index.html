@@ -3,26 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
     <title>Shrekfeet Intranet</title>
-    <meta name="description" content="SHREKFEET INTRANET is a comprehensive training and operations hub for lawncare professionals.">
-    <meta name="author" content="Lovable" />
-
-    <!-- TODO: Update og:title to match your application name -->
-    
-    
+    <meta name="description" content="Training and operations hub for the Shrekfeet team." />
+    <meta name="author" content="Shrekfeet" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/42a978af-ffea-4fa0-9300-d0960eb9da0b/id-preview-c2fcec2d--a531af6c-6c72-49ff-ba73-81df72aa27ba.lovable.app-1777373993227.png">
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/42a978af-ffea-4fa0-9300-d0960eb9da0b/id-preview-c2fcec2d--a531af6c-6c72-49ff-ba73-81df72aa27ba.lovable.app-1777373993227.png">
-    <meta property="og:title" content="Shrekfeet Intranet">
-  <meta name="twitter:title" content="Shrekfeet Intranet">
-  <meta property="og:description" content="SHREKFEET INTRANET is a comprehensive training and operations hub for lawncare professionals.">
-  <meta name="twitter:description" content="SHREKFEET INTRANET is a comprehensive training and operations hub for lawncare professionals.">
-</head>
-
+    <meta property="og:title" content="Shrekfeet Intranet" />
+    <meta property="og:description" content="Training and operations hub for the Shrekfeet team." />
+    <script>
+      /* GitHub Pages SPA routing fix — restores URL after 404 redirect */
+      (function(l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&');
+          }).join('?');
+          window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash);
+        }
+      }(window.location));
+    </script>
+  </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
