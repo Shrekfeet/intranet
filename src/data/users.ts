@@ -25,7 +25,7 @@ export const teamUsers: TeamUser[] = [
     id: "harry",
     name: "Harry",
     // Change this hash — it is the SHA-256 of "changeme"
-    passwordHash: "7fef31193f39c65e0e5d47e6b0b7e3c12aaef50ea1e91d0b38e3ea23faed44d1",
+    passwordHash: "057ba03d6c44104863dc7361fe4578965d1887360f90a0895882e58a6248fc86",
     isAdmin: true,
   },
   // Add your team members below, e.g.:
