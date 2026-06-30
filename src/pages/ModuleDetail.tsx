@@ -44,6 +44,12 @@ const FORMAT_GUIDE = (
       <strong>Two columns</strong> (image + text side by side on desktop, stacked on mobile):{" "}
       <code className="bg-amber-100 px-1 rounded whitespace-pre">{"[cols]\n![Caption|full](/intranet/images/x.jpg)\n|||\nYour text here\n[/cols]"}</code>
     </div>
+    <div className="border-t border-amber-200 pt-1.5">
+      <strong>Tip:</strong> Use blank lines between paragraphs. Text above or below a{" "}
+      <code className="bg-amber-100 px-1 rounded">[cols]</code> block spans the full width as normal.
+      Images go in <code className="bg-amber-100 px-1 rounded">/intranet/images/</code> — upload to{" "}
+      <code className="bg-amber-100 px-1 rounded">public/images/</code> in the repo and commit.
+    </div>
   </div>
 );
 
