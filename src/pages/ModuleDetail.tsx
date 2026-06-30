@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, CheckCircle2, Circle, Clock, ChevronDown, Trophy, RotateCcw } from "lucide-react";
@@ -186,6 +186,8 @@ const ModuleDetail = () => {
   const mod = [...trainingModules, ...customModules].find((m) => m.id === moduleId);
   const { isCompleted, toggleLesson, getModuleProgress } = useTrainingProgress();
   const [openLesson, setOpenLesson] = useState<string | null>(null);
+
+  useEffect(() => { window.scrollTo(0, 0); }, [moduleId]);
 
   if (!mod) {
     return (
