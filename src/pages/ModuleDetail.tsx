@@ -1,18 +1,32 @@
-import { useState, useEffect, useMemo } from "react";
-import { useLocation, useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, CheckCircle2, Circle, Clock, ChevronDown,
-  Trophy, RotateCcw, Pencil, Save, X, Loader2,
+  Trophy, RotateCcw, Pencil, Save, X, Loader2, Plus, Trash2,
 } from "lucide-react";
-import { trainingModules, trainingPaths, type Quiz, type Lesson, type TrainingModule } from "@/data/training-modules";
-import { useCustomModules } from "@/hooks/use-custom-modules";
+import { trainingPaths, type Quiz, type QuizQuestion, type Lesson, type TrainingModule } from "@/data/training-modules";
+import { useModuleStore } from "@/hooks/use-module-store";
 import { useTrainingProgress } from "@/hooks/use-training-progress";
-import { useContentOverrides } from "@/hooks/use-content-overrides";
 import { useAuth } from "@/contexts/AuthContext";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+const INPUT_CLS = "w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40";
+const TEXTAREA_CLS = `${INPUT_CLS} resize-none`;
+
+const FORMAT_GUIDE = (
+  <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-xs font-body text-amber-800">
+    <strong>Formatting guide:</strong>{" "}
+    <code className="bg-amber-100 px-1 rounded">**text**</code> = bold heading &nbsp;·&nbsp;
+    <code className="bg-amber-100 px-1 rounded">- item</code> = bullet &nbsp;·&nbsp;
+    <code className="bg-amber-100 px-1 rounded">1. item</code> = numbered list &nbsp;·&nbsp;
+    blank line = new paragraph
+  </div>
+);
 
 // ── Content renderer ─────────────────────────────────────────────────────────
 
@@ -22,18 +36,14 @@ function LessonContent({ content }: { content: string }) {
       {content.split("\n\n").map((block, bi) => (
         <div key={bi} className="mb-3">
           {block.split("\n").map((line, li) => {
-            if (line.startsWith("**") && line.endsWith("**")) {
+            if (line.startsWith("**") && line.endsWith("**"))
               return <p key={li} className="font-semibold text-foreground">{line.replace(/\*\*/g, "")}</p>;
-            }
-            if (line.startsWith("- ")) {
+            if (line.startsWith("- "))
               return <p key={li} className="ml-4 text-muted-foreground">• {line.slice(2)}</p>;
-            }
-            if (/^\d+\./.test(line)) {
+            if (/^\d+\./.test(line))
               return <p key={li} className="ml-4 text-muted-foreground">{line}</p>;
-            }
-            if (line.startsWith("⚠️")) {
+            if (line.startsWith("⚠️"))
               return <p key={li} className="text-amber-700 font-body font-medium">{line}</p>;
-            }
             return <p key={li} className="text-muted-foreground">{line.replace(/\*\*/g, "")}</p>;
           })}
         </div>
@@ -42,7 +52,7 @@ function LessonContent({ content }: { content: string }) {
   );
 }
 
-// ── Lesson editor ─────────────────────────────────────────────────────────────
+// ── Lesson editor (edit existing) ─────────────────────────────────────────────
 
 interface LessonEditorProps {
   lesson: Lesson;
@@ -55,61 +65,75 @@ function LessonEditor({ lesson, onSave, onCancel, saving }: LessonEditorProps) {
   const [title, setTitle] = useState(lesson.title);
   const [duration, setDuration] = useState(lesson.duration);
   const [content, setContent] = useState(lesson.content);
-
   const dirty = title !== lesson.title || duration !== lesson.duration || content !== lesson.content;
 
   return (
     <div className="space-y-4 pt-4">
-      <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-xs font-body text-amber-800">
-        <strong>Formatting guide:</strong> <code className="bg-amber-100 px-1 rounded">**text**</code> = bold heading &nbsp;·&nbsp;
-        <code className="bg-amber-100 px-1 rounded">- item</code> = bullet &nbsp;·&nbsp;
-        <code className="bg-amber-100 px-1 rounded">1. item</code> = numbered list &nbsp;·&nbsp;
-        blank line = new paragraph
-      </div>
-
+      {FORMAT_GUIDE}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="sm:col-span-2 space-y-1">
           <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Lesson title</label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
-          />
+          <input value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLS} />
         </div>
         <div className="space-y-1">
           <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Duration</label>
-          <input
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            placeholder="e.g. 10 min"
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
-          />
+          <input value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="e.g. 10 min" className={INPUT_CLS} />
         </div>
       </div>
-
       <div className="space-y-1">
         <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Content</label>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          rows={20}
-          className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y leading-relaxed"
-        />
+        <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={20} className={`${INPUT_CLS} font-mono resize-y leading-relaxed`} />
       </div>
-
       <div className="flex items-center justify-between gap-3 pt-1">
-        <p className="text-xs font-body text-muted-foreground">
-          {dirty ? "Unsaved changes" : "No changes"}
-        </p>
+        <p className="text-xs font-body text-muted-foreground">{dirty ? "Unsaved changes" : "No changes"}</p>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={onCancel} disabled={saving}>
-            <X className="h-3.5 w-3.5 mr-1.5" /> Cancel
-          </Button>
+          <Button variant="outline" size="sm" onClick={onCancel} disabled={saving}><X className="h-3.5 w-3.5 mr-1.5" />Cancel</Button>
           <Button size="sm" onClick={() => onSave({ title, duration, content })} disabled={!dirty || saving}>
             {saving ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1.5" />}
             Save changes
           </Button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── New lesson form ───────────────────────────────────────────────────────────
+
+interface NewLessonFormProps {
+  onAdd: (data: { title: string; duration: string; content: string }) => Promise<void>;
+  onCancel: () => void;
+  saving: boolean;
+}
+
+function NewLessonForm({ onAdd, onCancel, saving }: NewLessonFormProps) {
+  const [title, setTitle] = useState("");
+  const [duration, setDuration] = useState("");
+  const [content, setContent] = useState("");
+
+  return (
+    <div className="space-y-4 pt-4">
+      {FORMAT_GUIDE}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="sm:col-span-2 space-y-1">
+          <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Lesson title</label>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter lesson title…" className={INPUT_CLS} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Duration</label>
+          <input value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="e.g. 10 min" className={INPUT_CLS} />
+        </div>
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Content</label>
+        <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={12} className={`${INPUT_CLS} font-mono resize-y leading-relaxed`} />
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" size="sm" onClick={onCancel} disabled={saving}><X className="h-3.5 w-3.5 mr-1.5" />Cancel</Button>
+        <Button size="sm" onClick={() => onAdd({ title, duration, content })} disabled={!title.trim() || saving}>
+          {saving ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Plus className="h-3.5 w-3.5 mr-1.5" />}
+          Add lesson
+        </Button>
       </div>
     </div>
   );
@@ -128,7 +152,6 @@ function ModuleInfoEditor({ mod, onSave, onCancel, saving }: ModuleEditorProps) 
   const [title, setTitle] = useState(mod.title);
   const [description, setDescription] = useState(mod.description);
   const [estimatedTime, setEstimatedTime] = useState(mod.estimatedTime);
-
   const dirty = title !== mod.title || description !== mod.description || estimatedTime !== mod.estimatedTime;
 
   return (
@@ -137,35 +160,19 @@ function ModuleInfoEditor({ mod, onSave, onCancel, saving }: ModuleEditorProps) 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="sm:col-span-2 space-y-1">
           <label className="text-xs font-body text-muted-foreground">Title</label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
-          />
+          <input value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLS} />
         </div>
         <div className="space-y-1">
           <label className="text-xs font-body text-muted-foreground">Estimated time</label>
-          <input
-            value={estimatedTime}
-            onChange={(e) => setEstimatedTime(e.target.value)}
-            placeholder="e.g. 30 min"
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
-          />
+          <input value={estimatedTime} onChange={(e) => setEstimatedTime(e.target.value)} placeholder="e.g. 30 min" className={INPUT_CLS} />
         </div>
       </div>
       <div className="space-y-1">
         <label className="text-xs font-body text-muted-foreground">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={3}
-          className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
-        />
+        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className={TEXTAREA_CLS} />
       </div>
       <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={onCancel} disabled={saving}>
-          <X className="h-3.5 w-3.5 mr-1.5" /> Cancel
-        </Button>
+        <Button variant="outline" size="sm" onClick={onCancel} disabled={saving}><X className="h-3.5 w-3.5 mr-1.5" />Cancel</Button>
         <Button size="sm" onClick={() => onSave({ title, description, estimatedTime })} disabled={!dirty || saving}>
           {saving ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1.5" />}
           Save
@@ -175,7 +182,135 @@ function ModuleInfoEditor({ mod, onSave, onCancel, saving }: ModuleEditorProps) 
   );
 }
 
-// ── Quiz section ──────────────────────────────────────────────────────────────
+// ── Quiz editor ───────────────────────────────────────────────────────────────
+
+function blankQuestion(): QuizQuestion {
+  return { id: `q-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, question: "", options: ["", "", "", ""], correct: 0 };
+}
+
+interface QuizEditorProps {
+  initialQuiz: Quiz | undefined;
+  onSave: (quiz: Quiz) => Promise<void>;
+  onCancel: () => void;
+  saving: boolean;
+}
+
+function QuizEditor({ initialQuiz, onSave, onCancel, saving }: QuizEditorProps) {
+  const [passMark, setPassMark] = useState(initialQuiz?.passMark ?? 80);
+  const [questions, setQuestions] = useState<QuizQuestion[]>(
+    initialQuiz?.questions.length ? initialQuiz.questions : [blankQuestion()],
+  );
+
+  const updateQuestion = (qi: number, patch: Partial<QuizQuestion>) =>
+    setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, ...patch } : q)));
+
+  const updateOption = (qi: number, oi: number, value: string) =>
+    setQuestions((prev) =>
+      prev.map((q, i) => {
+        if (i !== qi) return q;
+        const options = [...q.options];
+        options[oi] = value;
+        return { ...q, options };
+      }),
+    );
+
+  const addQuestion = () => setQuestions((prev) => [...prev, blankQuestion()]);
+  const removeQuestion = (qi: number) => setQuestions((prev) => prev.filter((_, i) => i !== qi));
+
+  const valid =
+    questions.length > 0 &&
+    questions.every((q) => q.question.trim() && q.options.every((o) => o.trim()));
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex items-center gap-3">
+        <label className="text-sm font-body font-semibold">Pass mark</label>
+        <input
+          type="number" min={1} max={100} value={passMark}
+          onChange={(e) => setPassMark(Number(e.target.value))}
+          className="w-20 rounded-lg border bg-background px-3 py-1.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
+        />
+        <span className="text-sm font-body text-muted-foreground">%</span>
+      </div>
+
+      {questions.map((q, qi) => (
+        <div key={q.id} className="rounded-xl border p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">
+              Question {qi + 1}
+            </span>
+            <button
+              onClick={() => removeQuestion(qi)}
+              disabled={questions.length === 1}
+              className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Remove question"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+
+          <textarea
+            value={q.question}
+            onChange={(e) => updateQuestion(qi, { question: e.target.value })}
+            placeholder="Enter question…"
+            rows={2}
+            className={TEXTAREA_CLS}
+          />
+
+          <div className="space-y-2">
+            <p className="text-xs font-body text-muted-foreground">Options — click the circle to mark the correct answer</p>
+            {q.options.map((opt, oi) => (
+              <div key={oi} className="flex items-center gap-2">
+                <button
+                  onClick={() => updateQuestion(qi, { correct: oi })}
+                  className={cn(
+                    "h-5 w-5 rounded-full border-2 flex-shrink-0 transition-colors",
+                    q.correct === oi ? "border-primary bg-primary" : "border-muted-foreground/30 hover:border-primary/60",
+                  )}
+                  title={`Mark option ${oi + 1} as correct`}
+                />
+                <input
+                  value={opt}
+                  onChange={(e) => updateOption(qi, oi, e.target.value)}
+                  placeholder={`Option ${oi + 1}`}
+                  className={INPUT_CLS}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-body text-muted-foreground">Explanation (optional — shown after submitting)</label>
+            <textarea
+              value={q.explanation ?? ""}
+              onChange={(e) => updateQuestion(qi, { explanation: e.target.value })}
+              placeholder="Why is this the right answer?"
+              rows={2}
+              className={TEXTAREA_CLS}
+            />
+          </div>
+        </div>
+      ))}
+
+      <button
+        onClick={addQuestion}
+        className="w-full rounded-xl border-2 border-dashed border-primary/30 py-3 text-sm font-body text-primary hover:border-primary/60 hover:bg-primary/5 transition-colors"
+      >
+        + Add question
+      </button>
+
+      <div className="flex justify-end gap-2 pt-2 border-t">
+        <Button variant="outline" size="sm" onClick={onCancel} disabled={saving}><X className="h-3.5 w-3.5 mr-1.5" />Cancel</Button>
+        <Button size="sm" onClick={() => onSave({ passMark, questions })} disabled={!valid || saving}>
+          {saving ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1.5" />}
+          Save quiz
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ── Quiz viewer ───────────────────────────────────────────────────────────────
 
 function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
   const STORAGE_KEY = `sf-quiz-${moduleId}`;
@@ -213,30 +348,11 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
   };
 
   return (
-    <div className="mt-6 rounded-xl border-2 border-primary/20 bg-card overflow-hidden">
-      <div className="px-6 py-5 border-b bg-primary/5">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-            <Trophy className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-lg">Module Knowledge Test</h3>
-            <p className="text-sm font-body text-muted-foreground mt-0.5">
-              {quiz.questions.length} questions · Pass mark {quiz.passMark}%
-            </p>
-          </div>
-          {passed === true && (
-            <span className="ml-auto text-sm font-body font-semibold text-success flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4" /> Passed
-            </span>
-          )}
-        </div>
-      </div>
-
+    <>
       {submitted && (
         <div className={cn(
           "px-6 py-4 border-b flex items-center justify-between gap-4",
-          passed ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"
+          passed ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200",
         )}>
           <div>
             <p className={cn("font-body font-semibold text-base", passed ? "text-green-800" : "text-red-800")}>
@@ -263,8 +379,8 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
       <div className="divide-y">
         {quiz.questions.map((q, qi) => {
           const selected = answers[qi];
-          const isCorrect = submitted && selected === q.correct;
-          const isWrong = submitted && selected !== undefined && selected !== q.correct;
+          const isCorrectOpt = (oi: number) => submitted && oi === q.correct;
+          const isWrongSelected = (oi: number) => submitted && selected === oi && oi !== q.correct;
 
           return (
             <div key={q.id} className="px-6 py-5">
@@ -273,46 +389,38 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
                 {q.question}
               </p>
               <div className="space-y-2">
-                {q.options.map((opt, oi) => {
-                  const isSelected = selected === oi;
-                  const isCorrectOpt = submitted && oi === q.correct;
-                  const isWrongSelected = submitted && isSelected && oi !== q.correct;
-                  void isCorrect; void isWrong;
-
-                  return (
-                    <button
-                      key={oi}
-                      disabled={submitted}
-                      onClick={() => !submitted && setAnswers((prev) => ({ ...prev, [qi]: oi }))}
-                      className={cn(
-                        "w-full text-left text-sm font-body rounded-lg border px-4 py-3 transition-all",
-                        !submitted && !isSelected && "border-border hover:border-primary/40 hover:bg-primary/5",
-                        !submitted && isSelected && "border-primary bg-primary/5",
-                        submitted && isCorrectOpt && "border-green-400 bg-green-50 text-green-800",
-                        submitted && isWrongSelected && "border-red-400 bg-red-50 text-red-800",
-                        submitted && !isCorrectOpt && !isWrongSelected && "border-border text-muted-foreground",
-                      )}
-                    >
-                      <span className="flex items-center gap-3">
-                        <span className={cn(
-                          "h-5 w-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-xs",
-                          !submitted && isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
-                          submitted && isCorrectOpt ? "border-green-500 bg-green-500 text-white" : "",
-                          submitted && isWrongSelected ? "border-red-500 bg-red-500 text-white" : "",
-                        )}>
-                          {submitted && isCorrectOpt ? "✓" : submitted && isWrongSelected ? "✗" : isSelected && !submitted ? "●" : ""}
-                        </span>
-                        {opt}
+                {q.options.map((opt, oi) => (
+                  <button
+                    key={oi}
+                    disabled={submitted}
+                    onClick={() => !submitted && setAnswers((prev) => ({ ...prev, [qi]: oi }))}
+                    className={cn(
+                      "w-full text-left text-sm font-body rounded-lg border px-4 py-3 transition-all",
+                      !submitted && selected !== oi && "border-border hover:border-primary/40 hover:bg-primary/5",
+                      !submitted && selected === oi && "border-primary bg-primary/5",
+                      submitted && isCorrectOpt(oi) && "border-green-400 bg-green-50 text-green-800",
+                      submitted && isWrongSelected(oi) && "border-red-400 bg-red-50 text-red-800",
+                      submitted && !isCorrectOpt(oi) && !isWrongSelected(oi) && "border-border text-muted-foreground",
+                    )}
+                  >
+                    <span className="flex items-center gap-3">
+                      <span className={cn(
+                        "h-5 w-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-xs",
+                        !submitted && selected === oi ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
+                        submitted && isCorrectOpt(oi) ? "border-green-500 bg-green-500 text-white" : "",
+                        submitted && isWrongSelected(oi) ? "border-red-500 bg-red-500 text-white" : "",
+                      )}>
+                        {submitted && isCorrectOpt(oi) ? "✓" : submitted && isWrongSelected(oi) ? "✗" : selected === oi && !submitted ? "●" : ""}
                       </span>
-                    </button>
-                  );
-                })}
+                      {opt}
+                    </span>
+                  </button>
+                ))}
               </div>
-
               {submitted && showExplanations && q.explanation && (
                 <div className={cn(
                   "mt-3 rounded-lg px-4 py-3 text-sm font-body",
-                  selected === q.correct ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800"
+                  selected === q.correct ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800",
                 )}>
                   {q.explanation}
                 </div>
@@ -327,12 +435,10 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
           <p className="text-sm font-body text-muted-foreground">
             {Object.keys(answers).length} of {quiz.questions.length} answered
           </p>
-          <Button onClick={handleSubmit} disabled={!allAnswered}>
-            Submit answers
-          </Button>
+          <Button onClick={handleSubmit} disabled={!allAnswered}>Submit answers</Button>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -341,39 +447,22 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
 const ModuleDetail = () => {
   const { moduleId } = useParams();
   const location = useLocation();
-  const { modules: customModules } = useCustomModules();
+  const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  const { overrides, saving, patchLesson, patchModule } = useContentOverrides();
-
-  const baseMod = [...trainingModules, ...customModules].find((m) => m.id === moduleId);
+  const { allModules, saving, patchLesson, patchModule, addLesson, removeLesson, saveQuiz, deleteModule } = useModuleStore();
   const { isCompleted, toggleLesson, getModuleProgress } = useTrainingProgress();
 
   const [openLesson, setOpenLesson] = useState<string | null>(null);
   const [editingLesson, setEditingLesson] = useState<string | null>(null);
+  const [confirmDeleteLesson, setConfirmDeleteLesson] = useState<string | null>(null);
   const [editingModuleInfo, setEditingModuleInfo] = useState(false);
+  const [addingLesson, setAddingLesson] = useState(false);
+  const [editingQuiz, setEditingQuiz] = useState(false);
+  const [confirmDeleteModule, setConfirmDeleteModule] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, [moduleId]);
 
-  // Apply content overrides over static data
-  const mod = useMemo<TrainingModule | undefined>(() => {
-    if (!baseMod) return undefined;
-    const modOverride = overrides.modules[baseMod.id] ?? {};
-    return {
-      ...baseMod,
-      title: modOverride.title ?? baseMod.title,
-      description: modOverride.description ?? baseMod.description,
-      estimatedTime: modOverride.estimatedTime ?? baseMod.estimatedTime,
-      lessons: baseMod.lessons.map((l) => {
-        const lo = overrides.lessons[l.id] ?? {};
-        return {
-          ...l,
-          title: lo.title ?? l.title,
-          duration: lo.duration ?? l.duration,
-          content: lo.content ?? l.content,
-        };
-      }),
-    };
-  }, [baseMod, overrides]);
+  const mod = allModules.find((m) => m.id === moduleId);
 
   if (!mod) {
     return (
@@ -386,8 +475,7 @@ const ModuleDetail = () => {
 
   const progress = getModuleProgress(mod.lessons.map((l) => l.id));
   const backTo = typeof location.state?.fromSearch === "string" && location.state.fromSearch.length > 0
-    ? `/modules?${location.state.fromSearch}`
-    : "/modules";
+    ? `/modules?${location.state.fromSearch}` : "/modules";
   const audienceLabel = mod.roles.length === 2
     ? "Shared for lawn technicians and office staff"
     : `For ${trainingPaths[mod.roles[0]].title}`;
@@ -395,19 +483,35 @@ const ModuleDetail = () => {
     ? trainingPaths.technician.stages.find((s) => s.id === mod.stage)?.label
     : trainingPaths[mod.roles[0]].stages.find((s) => s.id === mod.stage)?.label;
 
-  const handleEditLesson = (lessonId: string) => {
-    setOpenLesson(lessonId);
-    setEditingLesson(lessonId);
-  };
-
   const handleSaveLesson = async (lessonId: string, patch: Partial<{ title: string; duration: string; content: string }>) => {
     await patchLesson(lessonId, patch);
     setEditingLesson(null);
   };
 
+  const handleRemoveLesson = async (lessonId: string) => {
+    await removeLesson(mod.id, lessonId);
+    setConfirmDeleteLesson(null);
+    if (openLesson === lessonId) setOpenLesson(null);
+  };
+
+  const handleAddLesson = async (data: { title: string; duration: string; content: string }) => {
+    await addLesson(mod.id, data);
+    setAddingLesson(false);
+  };
+
   const handleSaveModuleInfo = async (patch: { title: string; description: string; estimatedTime: string }) => {
     await patchModule(mod.id, patch);
     setEditingModuleInfo(false);
+  };
+
+  const handleSaveQuiz = async (quiz: Quiz) => {
+    await saveQuiz(mod.id, quiz);
+    setEditingQuiz(false);
+  };
+
+  const handleDeleteModule = async () => {
+    await deleteModule(mod.id);
+    navigate("/modules");
   };
 
   return (
@@ -437,30 +541,48 @@ const ModuleDetail = () => {
             <span className="text-sm font-body font-medium">{progress.percent}%</span>
           </div>
 
-          {isAdmin && !editingModuleInfo && (
-            <div className="mt-4 pt-4 border-t">
-              <Button variant="ghost" size="sm" onClick={() => setEditingModuleInfo(true)} className="text-muted-foreground">
-                <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit module info
-              </Button>
+          {isAdmin && (
+            <div className="mt-4 pt-4 border-t flex flex-wrap items-center gap-2">
+              {!editingModuleInfo && (
+                <Button variant="ghost" size="sm" onClick={() => setEditingModuleInfo(true)} className="text-muted-foreground">
+                  <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit module info
+                </Button>
+              )}
+              <div className="ml-auto flex items-center gap-2">
+                {confirmDeleteModule ? (
+                  <>
+                    <span className="text-xs font-body text-muted-foreground">Delete this module permanently?</span>
+                    <Button variant="destructive" size="sm" onClick={handleDeleteModule} disabled={saving}>
+                      {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Delete"}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setConfirmDeleteModule(false)}>Cancel</Button>
+                  </>
+                ) : (
+                  <Button
+                    variant="ghost" size="sm"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => setConfirmDeleteModule(true)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete module
+                  </Button>
+                )}
+              </div>
             </div>
           )}
 
           {isAdmin && editingModuleInfo && (
-            <ModuleInfoEditor
-              mod={mod}
-              onSave={handleSaveModuleInfo}
-              onCancel={() => setEditingModuleInfo(false)}
-              saving={saving}
-            />
+            <ModuleInfoEditor mod={mod} onSave={handleSaveModuleInfo} onCancel={() => setEditingModuleInfo(false)} saving={saving} />
           )}
         </div>
       </motion.div>
 
+      {/* Lessons */}
       <div className="space-y-3">
         {mod.lessons.map((lesson, i) => {
           const completed = isCompleted(lesson.id);
           const isOpen = openLesson === lesson.id;
           const isEditing = editingLesson === lesson.id;
+          const isConfirmingDelete = confirmDeleteLesson === lesson.id;
 
           return (
             <motion.div
@@ -471,18 +593,11 @@ const ModuleDetail = () => {
               className={cn("bg-card border rounded-xl overflow-hidden", isEditing && "border-primary/30 ring-1 ring-primary/20")}
             >
               <button
-                onClick={() => {
-                  if (isEditing) return;
-                  setOpenLesson(isOpen ? null : lesson.id);
-                }}
+                onClick={() => { if (isEditing || isConfirmingDelete) return; setOpenLesson(isOpen ? null : lesson.id); }}
                 className="w-full flex items-center gap-4 p-5 text-left hover:bg-muted/50 transition-colors"
               >
                 <div className="flex-shrink-0">
-                  {completed ? (
-                    <CheckCircle2 className="h-6 w-6 text-success" />
-                  ) : (
-                    <Circle className="h-6 w-6 text-muted-foreground" />
-                  )}
+                  {completed ? <CheckCircle2 className="h-6 w-6 text-success" /> : <Circle className="h-6 w-6 text-muted-foreground" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-body font-medium text-base">{lesson.title}</h3>
@@ -490,16 +605,41 @@ const ModuleDetail = () => {
                 </div>
 
                 {isAdmin && !isEditing && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleEditLesson(lesson.id); }}
-                    className="flex-shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                    title="Edit lesson"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
+                  <>
+                    {isConfirmingDelete ? (
+                      <span className="flex items-center gap-2 text-xs font-body flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <span className="text-muted-foreground">Remove lesson?</span>
+                        <button
+                          onClick={() => handleRemoveLesson(lesson.id)}
+                          className="text-destructive font-semibold hover:underline"
+                          disabled={saving}
+                        >
+                          {saving ? "…" : "Yes"}
+                        </button>
+                        <button onClick={() => setConfirmDeleteLesson(null)} className="text-muted-foreground hover:underline">No</button>
+                      </span>
+                    ) : (
+                      <>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setOpenLesson(lesson.id); setEditingLesson(lesson.id); }}
+                          className="flex-shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                          title="Edit lesson"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setConfirmDeleteLesson(lesson.id); }}
+                          className="flex-shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          title="Remove lesson"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </>
+                    )}
+                  </>
                 )}
 
-                {!isEditing && (
+                {!isEditing && !isConfirmingDelete && (
                   <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform flex-shrink-0 ${isOpen ? "rotate-180" : ""}`} />
                 )}
               </button>
@@ -522,14 +662,11 @@ const ModuleDetail = () => {
                         />
                       ) : (
                         <>
-                          <div className="pt-4">
-                            <LessonContent content={lesson.content} />
-                          </div>
+                          <div className="pt-4"><LessonContent content={lesson.content} /></div>
                           <div className="mt-4 pt-4 border-t flex justify-end">
                             <Button
                               onClick={(e) => { e.stopPropagation(); toggleLesson(lesson.id); }}
-                              variant={completed ? "outline" : "default"}
-                              size="sm"
+                              variant={completed ? "outline" : "default"} size="sm"
                             >
                               {completed ? "Mark Incomplete" : "Mark Complete"}
                             </Button>
@@ -543,9 +680,68 @@ const ModuleDetail = () => {
             </motion.div>
           );
         })}
+
+        {/* Add lesson */}
+        {isAdmin && (
+          addingLesson ? (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-card border border-primary/30 ring-1 ring-primary/20 rounded-xl overflow-hidden p-5"
+            >
+              <p className="text-sm font-body font-semibold text-primary mb-1">New lesson</p>
+              <NewLessonForm onAdd={handleAddLesson} onCancel={() => setAddingLesson(false)} saving={saving} />
+            </motion.div>
+          ) : (
+            <button
+              onClick={() => setAddingLesson(true)}
+              className="w-full rounded-xl border-2 border-dashed border-muted-foreground/20 py-4 text-sm font-body text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="h-4 w-4" /> Add lesson
+            </button>
+          )
+        )}
       </div>
 
-      {mod.quiz && <QuizSection quiz={mod.quiz} moduleId={mod.id} />}
+      {/* Quiz area */}
+      <div className="mt-6 rounded-xl border-2 border-primary/20 bg-card overflow-hidden">
+        <div className="px-6 py-5 border-b bg-primary/5 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+            <Trophy className="h-5 w-5" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg">Module Knowledge Test</h3>
+            {mod.quiz ? (
+              <p className="text-sm font-body text-muted-foreground mt-0.5">
+                {mod.quiz.questions.length} questions · Pass mark {mod.quiz.passMark}%
+              </p>
+            ) : (
+              <p className="text-sm font-body text-muted-foreground mt-0.5">No quiz configured yet</p>
+            )}
+          </div>
+          {mod.quiz && !editingQuiz && (
+            <span className="flex items-center gap-1.5 text-sm font-body font-semibold text-success">
+              {localStorage.getItem(`sf-quiz-${mod.id}`) === "true" && <><CheckCircle2 className="h-4 w-4" /> Passed</>}
+            </span>
+          )}
+          {isAdmin && !editingQuiz && (
+            <Button variant="ghost" size="sm" onClick={() => setEditingQuiz(true)} className="flex-shrink-0">
+              <Pencil className="h-3.5 w-3.5 mr-1.5" />
+              {mod.quiz ? "Edit quiz" : "Add quiz"}
+            </Button>
+          )}
+        </div>
+
+        {editingQuiz ? (
+          <QuizEditor initialQuiz={mod.quiz} onSave={handleSaveQuiz} onCancel={() => setEditingQuiz(false)} saving={saving} />
+        ) : mod.quiz ? (
+          <QuizSection quiz={mod.quiz} moduleId={mod.id} />
+        ) : (
+          <div className="px-6 py-8 text-center text-sm font-body text-muted-foreground">
+            {isAdmin ? 'Click "Add quiz" above to create a knowledge test for this module.' : "No knowledge test for this module yet."}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

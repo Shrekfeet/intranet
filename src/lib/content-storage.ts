@@ -3,6 +3,8 @@
  * Writes to content-overrides.json in the same private repo as progress.json.
  */
 
+import type { Lesson, Quiz, TrainingModule } from "@/data/training-modules";
+
 const OWNER = import.meta.env.VITE_GITHUB_OWNER as string;
 const REPO = import.meta.env.VITE_GITHUB_REPO as string;
 const TOKEN = import.meta.env.VITE_GITHUB_TOKEN as string;
@@ -28,11 +30,28 @@ export interface ModuleOverride {
 export interface ContentOverrides {
   lessons: Record<string, LessonOverride>;
   modules: Record<string, ModuleOverride>;
+  addedLessons: Record<string, Lesson[]>;
+  removedLessons: Record<string, string[]>;
+  quizOverrides: Record<string, Quiz>;
+  addedModules: TrainingModule[];
+  removedModules: string[];
 }
 
-const LOCAL_KEY = "sf-content-overrides";
+function normalize(raw: Partial<ContentOverrides>): ContentOverrides {
+  return {
+    lessons: raw.lessons ?? {},
+    modules: raw.modules ?? {},
+    addedLessons: raw.addedLessons ?? {},
+    removedLessons: raw.removedLessons ?? {},
+    quizOverrides: raw.quizOverrides ?? {},
+    addedModules: raw.addedModules ?? [],
+    removedModules: raw.removedModules ?? [],
+  };
+}
 
-const EMPTY: ContentOverrides = { lessons: {}, modules: {} };
+export const EMPTY_OVERRIDES: ContentOverrides = normalize({});
+
+const LOCAL_KEY = "sf-content-overrides";
 
 function apiUrl() {
   return `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`;
@@ -57,7 +76,7 @@ async function fetchFile(): Promise<GitHubFile | null> {
   if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
   const data = await res.json();
   const decoded = atob(data.content.replace(/\n/g, ""));
-  return { sha: data.sha, content: JSON.parse(decoded) };
+  return { sha: data.sha, content: normalize(JSON.parse(decoded)) };
 }
 
 async function writeFile(content: ContentOverrides, sha: string | null, message: string): Promise<void> {
@@ -79,22 +98,22 @@ export async function loadContentOverrides(): Promise<ContentOverrides> {
   if (!isGitHubConfigured) {
     try {
       const raw = localStorage.getItem(LOCAL_KEY);
-      return raw ? JSON.parse(raw) : EMPTY;
+      return raw ? normalize(JSON.parse(raw)) : EMPTY_OVERRIDES;
     } catch {
-      return EMPTY;
+      return EMPTY_OVERRIDES;
     }
   }
   try {
     const file = await fetchFile();
-    const data = file?.content ?? EMPTY;
+    const data = file?.content ?? EMPTY_OVERRIDES;
     localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
     return data;
   } catch {
     try {
       const raw = localStorage.getItem(LOCAL_KEY);
-      return raw ? JSON.parse(raw) : EMPTY;
+      return raw ? normalize(JSON.parse(raw)) : EMPTY_OVERRIDES;
     } catch {
-      return EMPTY;
+      return EMPTY_OVERRIDES;
     }
   }
 }
