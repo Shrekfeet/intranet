@@ -1,27 +1,55 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Leaf, Sprout, ShieldCheck, Calendar, ClipboardList, Users,
   GraduationCap, Truck, Wallet, Award, BookOpen, Compass,
-  PartyPopper, ArrowRight,
+  PartyPopper, ArrowRight, Phone,
 } from "lucide-react";
 import { experienceTracks, welcomeSections, type ExperienceLevel } from "@/data/welcome-pack";
 import { Badge } from "@/components/ui/badge";
+import { InDevBanner } from "@/components/InDevBanner";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Leaf, Sprout, ShieldCheck, Calendar, ClipboardList, Users,
-  GraduationCap, Truck, Wallet, Award, BookOpen, Compass,
+  GraduationCap, Truck, Wallet, Award, BookOpen, Compass, Phone,
 };
+
+const techQuickLinks = [
+  { title: "Technician Training", desc: "Start at Company Basics and work through each stage.", to: "/modules?role=technician" },
+  { title: "How-To Guides", desc: "Day-to-day reference for processes and systems.", to: "/how-to" },
+  { title: "Policies & Docs", desc: "Handbook, COSHH, bonus scheme and more.", to: "/policies" },
+  { title: "Troubleshooting Hub", desc: "Triage flows for when things don't go to plan.", to: "/operations" },
+];
+
+const officeQuickLinks = [
+  { title: "Office Training", desc: "Work through the office onboarding modules.", to: "/modules?role=office" },
+  { title: "How-To Guides", desc: "Guides for call handling, complaints, rescheduling and more.", to: "/how-to" },
+  { title: "Seasonal Calendar", desc: "Understand our treatment programme — essential for calls.", to: "/seasonal-calendar" },
+  { title: "Policies & Docs", desc: "Staff handbook, data handling guidelines and more.", to: "/policies" },
+];
 
 const WelcomePack = () => {
   const [track, setTrack] = useState<ExperienceLevel>("trainee");
   const activeTrack = experienceTracks.find((t) => t.id === track)!;
+  const isOffice = track === "office";
+
+  const filteredSections = useMemo(() => {
+    return welcomeSections.filter((s) => {
+      if (!s.audience || s.audience === "all") return true;
+      if (isOffice) return s.audience === "office";
+      return s.audience === "technician";
+    });
+  }, [isOffice]);
+
+  const quickLinks = isOffice ? officeQuickLinks : techQuickLinks;
 
   return (
     <div className="space-y-10">
+      <InDevBanner reason="The Welcome Pack is being personalised to Shrekfeet's onboarding process. Some sections may be incomplete or still being reviewed." />
+
       {/* Hero */}
       <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-8 md:p-12">
         <div className="flex items-start gap-4 max-w-3xl">
@@ -34,9 +62,8 @@ const WelcomePack = () => {
             </span>
             <h1 className="text-3xl md:text-4xl">Welcome to Shrekfeet</h1>
             <p className="text-muted-foreground font-body text-base md:text-lg">
-              Everything you need to get started as a Shrekfeet lawn technician — the role, what's expected,
-              your first six months, kit, payroll, bonus and where to go next. Read this pack first, then work
-              through the training paths at your own pace.
+              Everything you need to get started — the role, what's expected, your first six months, payroll and
+              where to go next. Pick your track below, then work through the sections at your own pace.
             </p>
           </div>
         </div>
@@ -51,7 +78,7 @@ const WelcomePack = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {experienceTracks.map((t) => {
             const active = t.id === track;
             return (
@@ -104,8 +131,8 @@ const WelcomePack = () => {
           </p>
         </div>
 
-        <Accordion type="multiple" defaultValue={["who-we-are", "the-role"]} className="space-y-2">
-          {welcomeSections.map((s) => {
+        <Accordion type="multiple" defaultValue={["who-we-are"]} className="space-y-2">
+          {filteredSections.map((s) => {
             const Icon = iconMap[s.icon] ?? Leaf;
             return (
               <AccordionItem
@@ -144,12 +171,7 @@ const WelcomePack = () => {
       <section className="space-y-4">
         <h2 className="text-2xl">Jump straight in</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {[
-            { title: "Technician Training", desc: "Start at Company Basics and work through each stage.", to: "/modules?role=technician" },
-            { title: "How-To Guides", desc: "Day-to-day reference for processes and systems.", to: "/how-to" },
-            { title: "Policies & Docs", desc: "Handbook, COSHH, bonus scheme and more.", to: "/policies" },
-            { title: "Troubleshooting Hub", desc: "Triage flows for when things don't go to plan.", to: "/operations" },
-          ].map((l) => (
+          {quickLinks.map((l) => (
             <Link
               key={l.to}
               to={l.to}

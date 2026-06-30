@@ -37,23 +37,24 @@ type SidebarItem = {
   url: string;
   icon: React.ComponentType<{ className?: string }>;
   exact?: boolean;
+  badge?: string;
 };
 
 const generalItems: SidebarItem[] = [
   { title: "Dashboard", url: "/", icon: Home, exact: true },
-  { title: "Welcome Pack", url: "/welcome", icon: PartyPopper, exact: true },
-  { title: "How-To Guides", url: "/how-to", icon: HelpCircle },
+  { title: "Welcome Pack", url: "/welcome", icon: PartyPopper, exact: true, badge: "In Dev" },
+  { title: "How-To Guides", url: "/how-to", icon: HelpCircle, badge: "In Dev" },
   { title: "Seasonal Calendar", url: "/seasonal-calendar", icon: CalendarDays, exact: true },
   { title: "Policies & Docs", url: "/policies", icon: FileText, exact: true },
 ];
 
 const operationsItems: SidebarItem[] = [
-  { title: "Troubleshooting Hub", url: "/operations", icon: Wrench, exact: true },
-  { title: "Scheduling Hub", url: "/scheduling", icon: Calendar, exact: true },
+  { title: "Troubleshooting Hub", url: "/operations", icon: Wrench, exact: true, badge: "In Dev" },
+  { title: "Scheduling Hub", url: "/scheduling", icon: Calendar, exact: true, badge: "In Dev" },
 ];
 
 const knowledgeItems: SidebarItem[] = [
-  { title: "Lawn ID", url: "/lawn-id", icon: Leaf, exact: true },
+  { title: "Lawn ID", url: "/lawn-id", icon: Leaf, exact: true, badge: "In Dev" },
   { title: "Supplier Directory", url: "/suppliers", icon: Building2, exact: true },
   { title: "Account Flags", url: "/account-flags", icon: Tag, exact: true },
   { title: "Condition Codes", url: "/condition-codes", icon: ClipboardList, exact: true },
@@ -61,8 +62,8 @@ const knowledgeItems: SidebarItem[] = [
 ];
 
 const trainingItems: SidebarItem[] = [
-  { title: "Technician Path", url: "/modules?role=technician", icon: Sprout },
-  { title: "Office Path", url: "/modules?role=office", icon: Phone },
+  { title: "Technician Path", url: "/modules?role=technician", icon: Sprout, badge: "In Dev" },
+  { title: "Office Path", url: "/modules?role=office", icon: Phone, badge: "In Dev" },
 ];
 
 const SIDEBAR_SCROLL_KEY = "sf-sidebar-scroll";
@@ -154,7 +155,16 @@ function NavGroup({
                     )}
                   >
                     <item.icon className={cn("mr-2 h-4 w-4 flex-shrink-0", active ? "text-sidebar-foreground" : "text-sidebar-foreground/80")} />
-                    {!collapsed && <span className="text-sm truncate">{item.title}</span>}
+                    {!collapsed && (
+                      <span className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="text-sm truncate">{item.title}</span>
+                        {item.badge && (
+                          <span className="text-[9px] font-body font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-600 flex-shrink-0">
+                            {item.badge}
+                          </span>
+                        )}
+                      </span>
+                    )}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

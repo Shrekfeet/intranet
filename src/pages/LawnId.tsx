@@ -6,6 +6,7 @@ import { lawnIdEntries, lawnIdCategories, type LawnIdCategory } from "@/data/law
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/PageHeader";
+import { InDevBanner } from "@/components/InDevBanner";
 
 const categoryStyles: Record<LawnIdCategory, string> = {
   "Grass Type": "bg-primary/10 text-primary",
@@ -57,6 +58,7 @@ const LawnId = () => {
 
   return (
     <div className="space-y-8">
+      <InDevBanner reason="Lawn ID entries are being reviewed and expanded. Some conditions, pests, and treatments may be missing or not yet specific to Shrekfeet's service areas." />
       <PageHeader
         icon={Leaf}
         label="Knowledge Centre"

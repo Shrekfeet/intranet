@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { InDevBanner } from "@/components/InDevBanner";
 import { motion } from "framer-motion";
 import { Clock, CheckCircle2, MapPin, Cloud } from "lucide-react";
 import { schedulingLessons, routeChecklist, evaluateWeather, type WeatherJobType } from "@/data/scheduling";
@@ -11,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 const Scheduling = () => {
   return (
     <div className="space-y-10">
+      <InDevBanner reason="Scheduling tools and lessons are being refined to match Shrekfeet's live routing and job management setup." />
       <div>
         <span className="text-xs font-body font-medium text-muted-foreground uppercase tracking-wider">Operations Skill</span>
         <h1 className="text-3xl md:text-4xl mt-1">Scheduling Hub</h1>

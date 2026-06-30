@@ -15,6 +15,7 @@ import { useTrainingProgress } from "@/hooks/use-training-progress";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/PageHeader";
+import { InDevBanner } from "@/components/InDevBanner";
 
 const Modules = () => {
   const { getModuleProgress } = useTrainingProgress();
@@ -52,6 +53,7 @@ const Modules = () => {
 
   return (
     <div className="space-y-8">
+      <InDevBanner reason="Training modules are being written and structured. Content is a work in progress and may not yet reflect Shrekfeet's exact onboarding process." />
       <PageHeader
         icon={BookOpen}
         label="Learning Paths"

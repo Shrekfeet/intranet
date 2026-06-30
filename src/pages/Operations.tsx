@@ -9,6 +9,7 @@ import { TriageCard } from "@/components/triage/TriageCard";
 import { triageFlows, allTags } from "@/data/triage-flows";
 import { useCustomFlows } from "@/hooks/use-custom-flows";
 import { PageHeader } from "@/components/PageHeader";
+import { InDevBanner } from "@/components/InDevBanner";
 
 const Operations = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -59,6 +60,7 @@ const Operations = () => {
 
   return (
     <div className="space-y-8 max-w-6xl">
+      <InDevBanner reason="Triage flows and troubleshooting guides are being expanded and tailored to Shrekfeet's specific products and processes." />
       <PageHeader
         icon={Wrench}
         label="Operations"

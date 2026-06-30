@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/PageHeader";
+import { InDevBanner } from "@/components/InDevBanner";
 
 const iconMap: Record<NonNullable<HowToGuide["icon"]>, React.ComponentType<{ className?: string }>> = {
   PackageSearch,
@@ -59,6 +60,7 @@ const HowTo = () => {
 
   return (
     <div className="space-y-8">
+      <InDevBanner reason="Guides are being reviewed and expanded to reflect Shrekfeet's specific processes and products. Content may be generic or incomplete." />
       <PageHeader
         icon={HelpCircle}
         label="How to…"
