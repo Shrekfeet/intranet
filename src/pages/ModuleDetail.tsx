@@ -39,7 +39,10 @@ const FORMAT_GUIDE = (
       &nbsp;· align: <code className="bg-amber-100 px-1 rounded">left</code>{" "}
       <code className="bg-amber-100 px-1 rounded">center</code>{" "}
       <code className="bg-amber-100 px-1 rounded">right</code>
-      &nbsp;· e.g. <code className="bg-amber-100 px-1 rounded">![Team photo|medium|center](/intranet/images/team.jpg)</code>
+    </div>
+    <div>
+      <strong>Two columns</strong> (image + text side by side on desktop, stacked on mobile):{" "}
+      <code className="bg-amber-100 px-1 rounded whitespace-pre">{"[cols]\n![Caption|full](/intranet/images/x.jpg)\n|||\nYour text here\n[/cols]"}</code>
     </div>
   </div>
 );
@@ -110,26 +113,47 @@ function renderInline(text: string): React.ReactNode {
 
 // ── Content renderer ─────────────────────────────────────────────────────────
 
+function renderLine(line: string, key: number): React.ReactNode {
+  if (IMAGE_RE.test(line))
+    return <ImageBlock key={key} raw={line} />;
+  if (line.startsWith("**") && line.endsWith("**"))
+    return <p key={key} className="font-semibold text-foreground">{line.slice(2, -2)}</p>;
+  if (line.startsWith("- "))
+    return <p key={key} className="ml-4 text-muted-foreground">• {renderInline(line.slice(2))}</p>;
+  if (/^\d+\./.test(line))
+    return <p key={key} className="ml-4 text-muted-foreground">{renderInline(line)}</p>;
+  if (line.startsWith("⚠️"))
+    return <p key={key} className="text-amber-700 font-body font-medium">{renderInline(line)}</p>;
+  return <p key={key} className="text-muted-foreground">{renderInline(line)}</p>;
+}
+
+function renderLines(text: string): React.ReactNode {
+  return text.split("\n").map((line, i) => renderLine(line, i));
+}
+
 function LessonContent({ content }: { content: string }) {
   return (
     <div className="prose prose-sm max-w-none font-body text-foreground">
-      {content.split("\n\n").map((block, bi) => (
-        <div key={bi} className="mb-3">
-          {block.split("\n").map((line, li) => {
-            if (IMAGE_RE.test(line))
-              return <ImageBlock key={li} raw={line} />;
-            if (line.startsWith("**") && line.endsWith("**"))
-              return <p key={li} className="font-semibold text-foreground">{line.slice(2, -2)}</p>;
-            if (line.startsWith("- "))
-              return <p key={li} className="ml-4 text-muted-foreground">• {renderInline(line.slice(2))}</p>;
-            if (/^\d+\./.test(line))
-              return <p key={li} className="ml-4 text-muted-foreground">{renderInline(line)}</p>;
-            if (line.startsWith("⚠️"))
-              return <p key={li} className="text-amber-700 font-body font-medium">{renderInline(line)}</p>;
-            return <p key={li} className="text-muted-foreground">{renderInline(line)}</p>;
-          })}
-        </div>
-      ))}
+      {content.split("\n\n").map((block, bi) => {
+        // Two-column block: [cols] left content ||| right content [/cols]
+        if (block.trimStart().startsWith("[cols]") && block.includes("[/cols]")) {
+          const inner = block.slice(block.indexOf("[cols]") + 6, block.lastIndexOf("[/cols]")).trim();
+          const sepIdx = inner.indexOf("\n|||\n");
+          const left = sepIdx >= 0 ? inner.slice(0, sepIdx).trim() : inner;
+          const right = sepIdx >= 0 ? inner.slice(sepIdx + 5).trim() : "";
+          return (
+            <div key={bi} className="flex flex-col sm:flex-row gap-5 my-2 items-start">
+              <div className="w-full sm:w-1/2 flex-shrink-0">{renderLines(left)}</div>
+              <div className="w-full sm:w-1/2">{renderLines(right)}</div>
+            </div>
+          );
+        }
+        return (
+          <div key={bi} className="mb-3">
+            {block.split("\n").map((line, li) => renderLine(line, li))}
+          </div>
+        );
+      })}
     </div>
   );
 }

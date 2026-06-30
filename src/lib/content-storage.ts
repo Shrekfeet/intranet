@@ -78,7 +78,7 @@ async function fetchFile(): Promise<GitHubFile | null> {
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
   const data = await res.json();
-  const decoded = atob(data.content.replace(/\n/g, ""));
+  const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
   return { sha: data.sha, content: normalize(JSON.parse(decoded)) };
 }
 
@@ -97,6 +97,20 @@ async function writeFile(content: ContentOverrides, sha: string | null, message:
   if (!res.ok) throw new Error(`GitHub write error: ${res.status}`);
 }
 
+function hasCorruptedLessons(data: ContentOverrides): boolean {
+  return Object.values(data.lessons).some((l) => {
+    const t = l.title ?? "";
+    const c = l.content ?? "";
+    return t.includes("Ã¢") || c.includes("Ã¢") ||  // Ã¢ pattern
+           t.includes("ÃÂ") || c.includes("ÃÂ") ||  // ÃÂ pattern
+           t.includes("â") || c.includes("â");    // â€ pattern
+  });
+}
+
+function repairOverrides(data: ContentOverrides): ContentOverrides {
+  return { ...data, lessons: {} };
+}
+
 export async function loadContentOverrides(): Promise<ContentOverrides> {
   if (!isGitHubConfigured) {
     try {
@@ -108,7 +122,12 @@ export async function loadContentOverrides(): Promise<ContentOverrides> {
   }
   try {
     const file = await fetchFile();
-    const data = file?.content ?? EMPTY_OVERRIDES;
+    let data = file?.content ?? EMPTY_OVERRIDES;
+    if (hasCorruptedLessons(data)) {
+      data = repairOverrides(data);
+      // Push repaired data back to GitHub so corruption doesn't recur
+      try { await writeFile(data, file?.sha ?? null, "Auto-repair: clear corrupted lesson overrides"); } catch { /* best-effort */ }
+    }
     localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
     return data;
   } catch {
