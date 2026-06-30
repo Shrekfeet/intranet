@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -23,6 +23,8 @@ const FORMAT_GUIDE = (
     <div>
       <strong>Text:</strong>{" "}
       <code className="bg-amber-100 px-1 rounded">**text**</code> = bold &nbsp;·&nbsp;
+      <code className="bg-amber-100 px-1 rounded">*text*</code> = <em>italic</em> &nbsp;·&nbsp;
+      <code className="bg-amber-100 px-1 rounded">__text__</code> = <u>underline</u> &nbsp;·&nbsp;
       <code className="bg-amber-100 px-1 rounded">- item</code> = bullet &nbsp;·&nbsp;
       <code className="bg-amber-100 px-1 rounded">1. item</code> = numbered &nbsp;·&nbsp;
       blank line = new paragraph
@@ -84,6 +86,28 @@ function ImageBlock({ raw }: { raw: string }) {
   );
 }
 
+// ── Inline formatter ─────────────────────────────────────────────────────────
+
+const INLINE_RE = /(\*\*[^*]+\*\*|\*[^*]+\*|__[^_]+__)/g;
+
+function renderInline(text: string): React.ReactNode {
+  const tokens = text.split(INLINE_RE);
+  if (tokens.length === 1) return text;
+  return (
+    <>
+      {tokens.map((tok, i) => {
+        if (tok.startsWith("**") && tok.endsWith("**"))
+          return <strong key={i}>{tok.slice(2, -2)}</strong>;
+        if (tok.startsWith("*") && tok.endsWith("*"))
+          return <em key={i}>{tok.slice(1, -1)}</em>;
+        if (tok.startsWith("__") && tok.endsWith("__"))
+          return <u key={i}>{tok.slice(2, -2)}</u>;
+        return tok;
+      })}
+    </>
+  );
+}
+
 // ── Content renderer ─────────────────────────────────────────────────────────
 
 function LessonContent({ content }: { content: string }) {
@@ -95,14 +119,14 @@ function LessonContent({ content }: { content: string }) {
             if (IMAGE_RE.test(line))
               return <ImageBlock key={li} raw={line} />;
             if (line.startsWith("**") && line.endsWith("**"))
-              return <p key={li} className="font-semibold text-foreground">{line.replace(/\*\*/g, "")}</p>;
+              return <p key={li} className="font-semibold text-foreground">{line.slice(2, -2)}</p>;
             if (line.startsWith("- "))
-              return <p key={li} className="ml-4 text-muted-foreground">• {line.slice(2)}</p>;
+              return <p key={li} className="ml-4 text-muted-foreground">• {renderInline(line.slice(2))}</p>;
             if (/^\d+\./.test(line))
-              return <p key={li} className="ml-4 text-muted-foreground">{line}</p>;
+              return <p key={li} className="ml-4 text-muted-foreground">{renderInline(line)}</p>;
             if (line.startsWith("⚠️"))
-              return <p key={li} className="text-amber-700 font-body font-medium">{line}</p>;
-            return <p key={li} className="text-muted-foreground">{line.replace(/\*\*/g, "")}</p>;
+              return <p key={li} className="text-amber-700 font-body font-medium">{renderInline(line)}</p>;
+            return <p key={li} className="text-muted-foreground">{renderInline(line)}</p>;
           })}
         </div>
       ))}
@@ -557,6 +581,17 @@ const ModuleDetail = () => {
     setAddingLesson(false);
   };
 
+  const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [sectionDraft, setSectionDraft] = useState("");
+
+  const handleRenameSection = async (oldName: string, newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed || trimmed === oldName) { setEditingSection(null); return; }
+    const affected = mod.lessons.filter((l) => l.section === oldName);
+    await Promise.all(affected.map((l) => patchLesson(l.id, { section: trimmed })));
+    setEditingSection(null);
+  };
+
   const handleMoveLesson = async (lessonId: string, direction: "up" | "down") => {
     const ids = mod.lessons.map((l) => l.id);
     const idx = ids.indexOf(lessonId);
@@ -657,8 +692,36 @@ const ModuleDetail = () => {
           return (
             <div key={lesson.id}>
             {showSectionHeader && (
-              <div className={cn("flex items-center gap-3 px-1 mb-2", i > 0 && "mt-5")}>
-                <span className="text-xs font-body font-bold uppercase tracking-widest text-muted-foreground">{lesson.section}</span>
+              <div className={cn("flex items-center gap-2 px-1 mb-2", i > 0 && "mt-5")}>
+                {isAdmin && editingSection === lesson.section ? (
+                  <>
+                    <input
+                      autoFocus
+                      value={sectionDraft}
+                      onChange={(e) => setSectionDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleRenameSection(lesson.section!, sectionDraft);
+                        if (e.key === "Escape") setEditingSection(null);
+                      }}
+                      className="text-xs font-body font-bold uppercase tracking-widest bg-transparent border-b border-primary outline-none text-primary w-32"
+                    />
+                    <button onClick={() => handleRenameSection(lesson.section!, sectionDraft)} className="text-xs font-body text-primary hover:underline">Save</button>
+                    <button onClick={() => setEditingSection(null)} className="text-xs font-body text-muted-foreground hover:underline">Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-xs font-body font-bold uppercase tracking-widest text-muted-foreground">{lesson.section}</span>
+                    {isAdmin && (
+                      <button
+                        onClick={() => { setEditingSection(lesson.section!); setSectionDraft(lesson.section!); }}
+                        className="p-0.5 rounded text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+                        title="Rename section"
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </button>
+                    )}
+                  </>
+                )}
                 <div className="flex-1 h-px bg-border" />
               </div>
             )}

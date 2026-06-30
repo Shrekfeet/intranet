@@ -37,6 +37,7 @@ export function useModuleStore() {
               title: lo.title ?? l.title,
               duration: lo.duration ?? l.duration,
               content: lo.content ?? l.content,
+              section: lo.section ?? l.section,
             };
           }),
         ...extraLessons,

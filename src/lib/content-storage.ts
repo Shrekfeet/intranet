@@ -19,6 +19,7 @@ export interface LessonOverride {
   title?: string;
   duration?: string;
   content?: string;
+  section?: string;
 }
 
 export interface ModuleOverride {
