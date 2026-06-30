@@ -1,15 +1,181 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation, useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, CheckCircle2, Circle, Clock, ChevronDown, Trophy, RotateCcw } from "lucide-react";
-import { trainingModules, trainingPaths, type Quiz } from "@/data/training-modules";
+import {
+  ArrowLeft, CheckCircle2, Circle, Clock, ChevronDown,
+  Trophy, RotateCcw, Pencil, Save, X, Loader2,
+} from "lucide-react";
+import { trainingModules, trainingPaths, type Quiz, type Lesson, type TrainingModule } from "@/data/training-modules";
 import { useCustomModules } from "@/hooks/use-custom-modules";
 import { useTrainingProgress } from "@/hooks/use-training-progress";
+import { useContentOverrides } from "@/hooks/use-content-overrides";
+import { useAuth } from "@/contexts/AuthContext";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// ── Quiz section ────────────────────────────────────────────────────────────
+// ── Content renderer ─────────────────────────────────────────────────────────
+
+function LessonContent({ content }: { content: string }) {
+  return (
+    <div className="prose prose-sm max-w-none font-body text-foreground">
+      {content.split("\n\n").map((block, bi) => (
+        <div key={bi} className="mb-3">
+          {block.split("\n").map((line, li) => {
+            if (line.startsWith("**") && line.endsWith("**")) {
+              return <p key={li} className="font-semibold text-foreground">{line.replace(/\*\*/g, "")}</p>;
+            }
+            if (line.startsWith("- ")) {
+              return <p key={li} className="ml-4 text-muted-foreground">• {line.slice(2)}</p>;
+            }
+            if (/^\d+\./.test(line)) {
+              return <p key={li} className="ml-4 text-muted-foreground">{line}</p>;
+            }
+            if (line.startsWith("⚠️")) {
+              return <p key={li} className="text-amber-700 font-body font-medium">{line}</p>;
+            }
+            return <p key={li} className="text-muted-foreground">{line.replace(/\*\*/g, "")}</p>;
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Lesson editor ─────────────────────────────────────────────────────────────
+
+interface LessonEditorProps {
+  lesson: Lesson;
+  onSave: (patch: Partial<Lesson>) => Promise<void>;
+  onCancel: () => void;
+  saving: boolean;
+}
+
+function LessonEditor({ lesson, onSave, onCancel, saving }: LessonEditorProps) {
+  const [title, setTitle] = useState(lesson.title);
+  const [duration, setDuration] = useState(lesson.duration);
+  const [content, setContent] = useState(lesson.content);
+
+  const dirty = title !== lesson.title || duration !== lesson.duration || content !== lesson.content;
+
+  return (
+    <div className="space-y-4 pt-4">
+      <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-xs font-body text-amber-800">
+        <strong>Formatting guide:</strong> <code className="bg-amber-100 px-1 rounded">**text**</code> = bold heading &nbsp;·&nbsp;
+        <code className="bg-amber-100 px-1 rounded">- item</code> = bullet &nbsp;·&nbsp;
+        <code className="bg-amber-100 px-1 rounded">1. item</code> = numbered list &nbsp;·&nbsp;
+        blank line = new paragraph
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="sm:col-span-2 space-y-1">
+          <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Lesson title</label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Duration</label>
+          <input
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            placeholder="e.g. 10 min"
+            className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Content</label>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          rows={20}
+          className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y leading-relaxed"
+        />
+      </div>
+
+      <div className="flex items-center justify-between gap-3 pt-1">
+        <p className="text-xs font-body text-muted-foreground">
+          {dirty ? "Unsaved changes" : "No changes"}
+        </p>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={onCancel} disabled={saving}>
+            <X className="h-3.5 w-3.5 mr-1.5" /> Cancel
+          </Button>
+          <Button size="sm" onClick={() => onSave({ title, duration, content })} disabled={!dirty || saving}>
+            {saving ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1.5" />}
+            Save changes
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Module info editor ────────────────────────────────────────────────────────
+
+interface ModuleEditorProps {
+  mod: TrainingModule;
+  onSave: (patch: { title: string; description: string; estimatedTime: string }) => Promise<void>;
+  onCancel: () => void;
+  saving: boolean;
+}
+
+function ModuleInfoEditor({ mod, onSave, onCancel, saving }: ModuleEditorProps) {
+  const [title, setTitle] = useState(mod.title);
+  const [description, setDescription] = useState(mod.description);
+  const [estimatedTime, setEstimatedTime] = useState(mod.estimatedTime);
+
+  const dirty = title !== mod.title || description !== mod.description || estimatedTime !== mod.estimatedTime;
+
+  return (
+    <div className="mt-4 pt-4 border-t space-y-3">
+      <p className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Editing module info</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="sm:col-span-2 space-y-1">
+          <label className="text-xs font-body text-muted-foreground">Title</label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-body text-muted-foreground">Estimated time</label>
+          <input
+            value={estimatedTime}
+            onChange={(e) => setEstimatedTime(e.target.value)}
+            placeholder="e.g. 30 min"
+            className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs font-body text-muted-foreground">Description</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={3}
+          className="w-full rounded-lg border bg-background px-3 py-2 text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+        />
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" size="sm" onClick={onCancel} disabled={saving}>
+          <X className="h-3.5 w-3.5 mr-1.5" /> Cancel
+        </Button>
+        <Button size="sm" onClick={() => onSave({ title, description, estimatedTime })} disabled={!dirty || saving}>
+          {saving ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1.5" />}
+          Save
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ── Quiz section ──────────────────────────────────────────────────────────────
 
 function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
   const STORAGE_KEY = `sf-quiz-${moduleId}`;
@@ -25,7 +191,6 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
   const [showExplanations, setShowExplanations] = useState(false);
 
   const allAnswered = quiz.questions.every((_, i) => answers[i] !== undefined);
-
   const score = submitted
     ? Math.round((quiz.questions.filter((q, i) => answers[i] === q.correct).length / quiz.questions.length) * 100)
     : 0;
@@ -49,7 +214,6 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
 
   return (
     <div className="mt-6 rounded-xl border-2 border-primary/20 bg-card overflow-hidden">
-      {/* Header */}
       <div className="px-6 py-5 border-b bg-primary/5">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
@@ -69,7 +233,6 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
         </div>
       </div>
 
-      {/* Result banner */}
       {submitted && (
         <div className={cn(
           "px-6 py-4 border-b flex items-center justify-between gap-4",
@@ -85,11 +248,9 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
             </p>
           </div>
           <div className="flex gap-2 flex-shrink-0">
-            {submitted && (
-              <Button variant="ghost" size="sm" onClick={() => setShowExplanations(!showExplanations)}>
-                {showExplanations ? "Hide" : "Show"} answers
-              </Button>
-            )}
+            <Button variant="ghost" size="sm" onClick={() => setShowExplanations(!showExplanations)}>
+              {showExplanations ? "Hide" : "Show"} answers
+            </Button>
             {!passed && (
               <Button variant="outline" size="sm" onClick={handleRetry}>
                 <RotateCcw className="h-3.5 w-3.5 mr-1.5" /> Retry
@@ -99,7 +260,6 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
         </div>
       )}
 
-      {/* Questions */}
       <div className="divide-y">
         {quiz.questions.map((q, qi) => {
           const selected = answers[qi];
@@ -117,6 +277,7 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
                   const isSelected = selected === oi;
                   const isCorrectOpt = submitted && oi === q.correct;
                   const isWrongSelected = submitted && isSelected && oi !== q.correct;
+                  void isCorrect; void isWrong;
 
                   return (
                     <button
@@ -148,11 +309,10 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
                 })}
               </div>
 
-              {/* Explanation */}
               {submitted && showExplanations && q.explanation && (
                 <div className={cn(
                   "mt-3 rounded-lg px-4 py-3 text-sm font-body",
-                  isCorrect ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800"
+                  selected === q.correct ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800"
                 )}>
                   {q.explanation}
                 </div>
@@ -162,7 +322,6 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
         })}
       </div>
 
-      {/* Submit */}
       {!submitted && (
         <div className="px-6 py-4 border-t bg-muted/30 flex items-center justify-between">
           <p className="text-sm font-body text-muted-foreground">
@@ -177,17 +336,44 @@ function QuizSection({ quiz, moduleId }: { quiz: Quiz; moduleId: string }) {
   );
 }
 
-// ── Main page ────────────────────────────────────────────────────────────────
+// ── Main page ─────────────────────────────────────────────────────────────────
 
 const ModuleDetail = () => {
   const { moduleId } = useParams();
   const location = useLocation();
   const { modules: customModules } = useCustomModules();
-  const mod = [...trainingModules, ...customModules].find((m) => m.id === moduleId);
+  const { isAdmin } = useAuth();
+  const { overrides, saving, patchLesson, patchModule } = useContentOverrides();
+
+  const baseMod = [...trainingModules, ...customModules].find((m) => m.id === moduleId);
   const { isCompleted, toggleLesson, getModuleProgress } = useTrainingProgress();
+
   const [openLesson, setOpenLesson] = useState<string | null>(null);
+  const [editingLesson, setEditingLesson] = useState<string | null>(null);
+  const [editingModuleInfo, setEditingModuleInfo] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, [moduleId]);
+
+  // Apply content overrides over static data
+  const mod = useMemo<TrainingModule | undefined>(() => {
+    if (!baseMod) return undefined;
+    const modOverride = overrides.modules[baseMod.id] ?? {};
+    return {
+      ...baseMod,
+      title: modOverride.title ?? baseMod.title,
+      description: modOverride.description ?? baseMod.description,
+      estimatedTime: modOverride.estimatedTime ?? baseMod.estimatedTime,
+      lessons: baseMod.lessons.map((l) => {
+        const lo = overrides.lessons[l.id] ?? {};
+        return {
+          ...l,
+          title: lo.title ?? l.title,
+          duration: lo.duration ?? l.duration,
+          content: lo.content ?? l.content,
+        };
+      }),
+    };
+  }, [baseMod, overrides]);
 
   if (!mod) {
     return (
@@ -206,8 +392,23 @@ const ModuleDetail = () => {
     ? "Shared for lawn technicians and office staff"
     : `For ${trainingPaths[mod.roles[0]].title}`;
   const stageLabel = mod.roles.length === 2
-    ? trainingPaths.technician.stages.find((stage) => stage.id === mod.stage)?.label
-    : trainingPaths[mod.roles[0]].stages.find((stage) => stage.id === mod.stage)?.label;
+    ? trainingPaths.technician.stages.find((s) => s.id === mod.stage)?.label
+    : trainingPaths[mod.roles[0]].stages.find((s) => s.id === mod.stage)?.label;
+
+  const handleEditLesson = (lessonId: string) => {
+    setOpenLesson(lessonId);
+    setEditingLesson(lessonId);
+  };
+
+  const handleSaveLesson = async (lessonId: string, patch: Partial<{ title: string; duration: string; content: string }>) => {
+    await patchLesson(lessonId, patch);
+    setEditingLesson(null);
+  };
+
+  const handleSaveModuleInfo = async (patch: { title: string; description: string; estimatedTime: string }) => {
+    await patchModule(mod.id, patch);
+    setEditingModuleInfo(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -235,6 +436,23 @@ const ModuleDetail = () => {
             <Progress value={progress.percent} className="h-3 flex-1" />
             <span className="text-sm font-body font-medium">{progress.percent}%</span>
           </div>
+
+          {isAdmin && !editingModuleInfo && (
+            <div className="mt-4 pt-4 border-t">
+              <Button variant="ghost" size="sm" onClick={() => setEditingModuleInfo(true)} className="text-muted-foreground">
+                <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit module info
+              </Button>
+            </div>
+          )}
+
+          {isAdmin && editingModuleInfo && (
+            <ModuleInfoEditor
+              mod={mod}
+              onSave={handleSaveModuleInfo}
+              onCancel={() => setEditingModuleInfo(false)}
+              saving={saving}
+            />
+          )}
         </div>
       </motion.div>
 
@@ -242,6 +460,7 @@ const ModuleDetail = () => {
         {mod.lessons.map((lesson, i) => {
           const completed = isCompleted(lesson.id);
           const isOpen = openLesson === lesson.id;
+          const isEditing = editingLesson === lesson.id;
 
           return (
             <motion.div
@@ -249,10 +468,13 @@ const ModuleDetail = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06, duration: 0.35 }}
-              className="bg-card border rounded-xl overflow-hidden"
+              className={cn("bg-card border rounded-xl overflow-hidden", isEditing && "border-primary/30 ring-1 ring-primary/20")}
             >
               <button
-                onClick={() => setOpenLesson(isOpen ? null : lesson.id)}
+                onClick={() => {
+                  if (isEditing) return;
+                  setOpenLesson(isOpen ? null : lesson.id);
+                }}
                 className="w-full flex items-center gap-4 p-5 text-left hover:bg-muted/50 transition-colors"
               >
                 <div className="flex-shrink-0">
@@ -266,7 +488,20 @@ const ModuleDetail = () => {
                   <h3 className="font-body font-medium text-base">{lesson.title}</h3>
                   <span className="text-xs text-muted-foreground font-body">{lesson.duration}</span>
                 </div>
-                <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
+
+                {isAdmin && !isEditing && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleEditLesson(lesson.id); }}
+                    className="flex-shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    title="Edit lesson"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                )}
+
+                {!isEditing && (
+                  <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform flex-shrink-0 ${isOpen ? "rotate-180" : ""}`} />
+                )}
               </button>
 
               <AnimatePresence>
@@ -278,36 +513,29 @@ const ModuleDetail = () => {
                     transition={{ duration: 0.25 }}
                   >
                     <div className="px-5 pb-5 border-t">
-                      <div className="pt-4 prose prose-sm max-w-none font-body text-foreground">
-                        {lesson.content.split("\n\n").map((block, bi) => (
-                          <div key={bi} className="mb-3">
-                            {block.split("\n").map((line, li) => {
-                              if (line.startsWith("**") && line.endsWith("**")) {
-                                return <p key={li} className="font-semibold text-foreground">{line.replace(/\*\*/g, "")}</p>;
-                              }
-                              if (line.startsWith("- ")) {
-                                return <p key={li} className="ml-4 text-muted-foreground">• {line.slice(2)}</p>;
-                              }
-                              if (/^\d+\./.test(line)) {
-                                return <p key={li} className="ml-4 text-muted-foreground">{line}</p>;
-                              }
-                              if (line.startsWith("⚠️")) {
-                                return <p key={li} className="text-amber-700 font-body font-medium">{line}</p>;
-                              }
-                              return <p key={li} className="text-muted-foreground">{line.replace(/\*\*/g, "")}</p>;
-                            })}
+                      {isEditing ? (
+                        <LessonEditor
+                          lesson={lesson}
+                          onSave={(patch) => handleSaveLesson(lesson.id, patch)}
+                          onCancel={() => setEditingLesson(null)}
+                          saving={saving}
+                        />
+                      ) : (
+                        <>
+                          <div className="pt-4">
+                            <LessonContent content={lesson.content} />
                           </div>
-                        ))}
-                      </div>
-                      <div className="mt-4 pt-4 border-t flex justify-end">
-                        <Button
-                          onClick={(e) => { e.stopPropagation(); toggleLesson(lesson.id); }}
-                          variant={completed ? "outline" : "default"}
-                          size="sm"
-                        >
-                          {completed ? "Mark Incomplete" : "Mark Complete"}
-                        </Button>
-                      </div>
+                          <div className="mt-4 pt-4 border-t flex justify-end">
+                            <Button
+                              onClick={(e) => { e.stopPropagation(); toggleLesson(lesson.id); }}
+                              variant={completed ? "outline" : "default"}
+                              size="sm"
+                            >
+                              {completed ? "Mark Incomplete" : "Mark Complete"}
+                            </Button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -317,7 +545,6 @@ const ModuleDetail = () => {
         })}
       </div>
 
-      {/* Knowledge test */}
       {mod.quiz && <QuizSection quiz={mod.quiz} moduleId={mod.id} />}
     </div>
   );
