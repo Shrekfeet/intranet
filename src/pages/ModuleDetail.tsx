@@ -138,29 +138,59 @@ function renderLines(text: string): React.ReactNode {
 }
 
 function LessonContent({ content }: { content: string }) {
-  return (
-    <div className="prose prose-sm max-w-none font-body text-foreground">
-      {content.split("\n\n").map((block, bi) => {
-        // Two-column block: [cols] left content ||| right content [/cols]
-        if (block.trimStart().startsWith("[cols]") && block.includes("[/cols]")) {
-          const inner = block.slice(block.indexOf("[cols]") + 6, block.lastIndexOf("[/cols]")).trim();
-          const sepIdx = inner.indexOf("\n|||\n");
-          const left = sepIdx >= 0 ? inner.slice(0, sepIdx).trim() : inner;
-          const right = sepIdx >= 0 ? inner.slice(sepIdx + 5).trim() : "";
-          return (
-            <div key={bi} className="flex flex-col sm:flex-row gap-5 my-2 items-start">
-              <div className="w-full sm:w-1/2 flex-shrink-0">{renderLines(left)}</div>
-              <div className="w-full sm:w-1/2">{renderLines(right)}</div>
+  const normalised = content.replace(/\r\n/g, "\n");
+
+  // Split on [cols]...[/cols] so columns work anywhere — not just at block starts
+  const COLS_RE = /\[cols\]([\s\S]*?)\[\/cols\]/g;
+  const segments: React.ReactNode[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let key = 0;
+
+  while ((m = COLS_RE.exec(normalised)) !== null) {
+    // Text before this [cols] block
+    if (m.index > last) {
+      const before = normalised.slice(last, m.index).replace(/^\n+|\n+$/g, "");
+      if (before) {
+        segments.push(
+          ...before.split("\n\n").map((block) => (
+            <div key={key++} className="mb-3">
+              {block.split("\n").map((line, li) => renderLine(line, li))}
             </div>
-          );
-        }
-        return (
-          <div key={bi} className="mb-3">
+          )),
+        );
+      }
+    }
+    // The [cols] block itself
+    const inner = m[1].trim();
+    const sepIdx = inner.indexOf("\n|||\n");
+    const left = sepIdx >= 0 ? inner.slice(0, sepIdx).trim() : inner;
+    const right = sepIdx >= 0 ? inner.slice(sepIdx + 5).trim() : "";
+    segments.push(
+      <div key={key++} className="flex flex-col sm:flex-row gap-5 my-3 items-start">
+        <div className="w-full sm:w-1/2 flex-shrink-0">{renderLines(left)}</div>
+        <div className="w-full sm:w-1/2">{renderLines(right)}</div>
+      </div>,
+    );
+    last = m.index + m[0].length;
+  }
+
+  // Remaining text after last [cols]
+  if (last < normalised.length) {
+    const after = normalised.slice(last).replace(/^\n+/, "");
+    if (after) {
+      segments.push(
+        ...after.split("\n\n").map((block) => (
+          <div key={key++} className="mb-3">
             {block.split("\n").map((line, li) => renderLine(line, li))}
           </div>
-        );
-      })}
-    </div>
+        )),
+      );
+    }
+  }
+
+  return (
+    <div className="prose prose-sm max-w-none font-body text-foreground">{segments}</div>
   );
 }
 

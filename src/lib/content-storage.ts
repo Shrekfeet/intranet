@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GitHub API storage for content overrides.
  * Writes to content-overrides.json in the same private repo as progress.json.
  */
@@ -97,18 +97,41 @@ async function writeFile(content: ContentOverrides, sha: string | null, message:
   if (!res.ok) throw new Error(`GitHub write error: ${res.status}`);
 }
 
+// Detects UTF-8-decoded-as-Latin-1 corruption patterns
+const CORRUPT_RE = /Ã¢|Ã|â/g;
+
 function hasCorruptedLessons(data: ContentOverrides): boolean {
+  CORRUPT_RE.lastIndex = 0;
   return Object.values(data.lessons).some((l) => {
-    const t = l.title ?? "";
-    const c = l.content ?? "";
-    return t.includes("Ã¢") || c.includes("Ã¢") ||  // Ã¢ pattern
-           t.includes("ÃÂ") || c.includes("ÃÂ") ||  // ÃÂ pattern
-           t.includes("â") || c.includes("â");    // â€ pattern
+    CORRUPT_RE.lastIndex = 0;
+    return CORRUPT_RE.test(l.title ?? "") || (CORRUPT_RE.lastIndex = 0, CORRUPT_RE.test(l.content ?? ""));
   });
 }
 
+// Fixes one round of UTF-8-as-Latin-1 corruption: â (U+00E2) + invisible bytes = em dash
+function fixCorruptedString(s: string): string {
+  // Each em/en dash and smart quote was encoded as 3 UTF-8 bytes, then mis-decoded as 3 Latin-1 chars.
+  // Match by explicit Unicode code points of those byte values.
+  return s
+    .replace(/â/g, "—") // em dash
+    .replace(/â/g, "–") // en dash
+    .replace(/â/g, "’") // right single quote
+    .replace(/â/g, "“") // left double quote
+    .replace(/â/g, "”") // right double quote
+    .replace(/â¦/g, "…") // ellipsis
+    .replace(/â[-¿]/g, "—"); // fallback unknown → em dash
+}
+
 function repairOverrides(data: ContentOverrides): ContentOverrides {
-  return { ...data, lessons: {} };
+  const fixedLessons: Record<string, LessonOverride> = {};
+  for (const [id, l] of Object.entries(data.lessons)) {
+    fixedLessons[id] = {
+      ...l,
+      title: l.title ? fixCorruptedString(l.title) : l.title,
+      content: l.content ? fixCorruptedString(l.content) : l.content,
+    };
+  }
+  return { ...data, lessons: fixedLessons };
 }
 
 export async function loadContentOverrides(): Promise<ContentOverrides> {
@@ -125,8 +148,7 @@ export async function loadContentOverrides(): Promise<ContentOverrides> {
     let data = file?.content ?? EMPTY_OVERRIDES;
     if (hasCorruptedLessons(data)) {
       data = repairOverrides(data);
-      // Push repaired data back to GitHub so corruption doesn't recur
-      try { await writeFile(data, file?.sha ?? null, "Auto-repair: clear corrupted lesson overrides"); } catch { /* best-effort */ }
+      try { await writeFile(data, file?.sha ?? null, "Auto-repair: fix corrupted lesson overrides"); } catch { /* best-effort */ }
     }
     localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
     return data;
