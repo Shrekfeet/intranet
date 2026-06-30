@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, CheckCircle2, Circle, Clock, ChevronDown,
-  Trophy, RotateCcw, Pencil, Save, X, Loader2, Plus, Trash2,
+  Trophy, RotateCcw, Pencil, Save, X, Loader2, Plus, Trash2, ChevronUp,
 } from "lucide-react";
 import { trainingPaths, type Quiz, type QuizQuestion, type Lesson, type TrainingModule } from "@/data/training-modules";
 import { useModuleStore } from "@/hooks/use-module-store";
@@ -507,7 +507,7 @@ const ModuleDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  const { allModules, saving, patchLesson, patchModule, addLesson, removeLesson, saveQuiz, deleteModule } = useModuleStore();
+  const { allModules, saving, patchLesson, patchModule, addLesson, removeLesson, saveQuiz, deleteModule, reorderLessons } = useModuleStore();
   const { isCompleted, toggleLesson, getModuleProgress } = useTrainingProgress();
 
   const [openLesson, setOpenLesson] = useState<string | null>(null);
@@ -555,6 +555,17 @@ const ModuleDetail = () => {
   const handleAddLesson = async (data: { title: string; duration: string; content: string }) => {
     await addLesson(mod.id, data);
     setAddingLesson(false);
+  };
+
+  const handleMoveLesson = async (lessonId: string, direction: "up" | "down") => {
+    const ids = mod.lessons.map((l) => l.id);
+    const idx = ids.indexOf(lessonId);
+    if (direction === "up" && idx === 0) return;
+    if (direction === "down" && idx === ids.length - 1) return;
+    const next = [...ids];
+    const swap = direction === "up" ? idx - 1 : idx + 1;
+    [next[idx], next[swap]] = [next[swap], next[idx]];
+    await reorderLessons(mod.id, next);
   };
 
   const handleSaveModuleInfo = async (patch: { title: string; description: string; estimatedTime: string }) => {
@@ -641,10 +652,18 @@ const ModuleDetail = () => {
           const isOpen = openLesson === lesson.id;
           const isEditing = editingLesson === lesson.id;
           const isConfirmingDelete = confirmDeleteLesson === lesson.id;
+          const showSectionHeader = lesson.section && lesson.section !== mod.lessons[i - 1]?.section;
 
           return (
+            <div key={lesson.id}>
+            {showSectionHeader && (
+              <div className={cn("flex items-center gap-3 px-1 mb-2", i > 0 && "mt-5")}>
+                <span className="text-xs font-body font-bold uppercase tracking-widest text-muted-foreground">{lesson.section}</span>
+                <div className="flex-1 h-px bg-border" />
+              </div>
+            )}
             <motion.div
-              key={lesson.id}
+              key={`motion-${lesson.id}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06, duration: 0.35 }}
@@ -678,6 +697,24 @@ const ModuleDetail = () => {
                       </span>
                     ) : (
                       <>
+                        <div className="flex flex-col flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleMoveLesson(lesson.id, "up"); }}
+                            disabled={i === 0 || saving}
+                            className="p-0.5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-20 disabled:cursor-default"
+                            title="Move up"
+                          >
+                            <ChevronUp className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleMoveLesson(lesson.id, "down"); }}
+                            disabled={i === mod.lessons.length - 1 || saving}
+                            className="p-0.5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-20 disabled:cursor-default"
+                            title="Move down"
+                          >
+                            <ChevronDown className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                         <button
                           onClick={(e) => { e.stopPropagation(); setOpenLesson(lesson.id); setEditingLesson(lesson.id); }}
                           className="flex-shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
@@ -736,6 +773,7 @@ const ModuleDetail = () => {
                 )}
               </AnimatePresence>
             </motion.div>
+            </div>
           );
         })}
 

@@ -19,29 +19,37 @@ export function useModuleStore() {
     const removedLessons = overrides.removedLessons ?? {};
     const addedLessons = overrides.addedLessons ?? {};
     const quizOverrides = overrides.quizOverrides ?? {};
+    const lessonOrder = overrides.lessonOrder ?? {};
 
     const applyLessonOverrides = (m: TrainingModule) => {
       const removedLessonIds = new Set(removedLessons[m.id] ?? []);
       const extraLessons = addedLessons[m.id] ?? [];
       const quizOverride = quizOverrides[m.id];
-      return {
-        ...m,
-        lessons: [
-          ...m.lessons
-            .filter((l) => !removedLessonIds.has(l.id))
-            .map((l) => {
-              const lo = overrides.lessons[l.id] ?? {};
-              return {
-                ...l,
-                title: lo.title ?? l.title,
-                duration: lo.duration ?? l.duration,
-                content: lo.content ?? l.content,
-              };
-            }),
-          ...extraLessons,
-        ],
-        quiz: quizOverride ?? m.quiz,
-      };
+      const orderedIds = lessonOrder[m.id];
+
+      const combined = [
+        ...m.lessons
+          .filter((l) => !removedLessonIds.has(l.id))
+          .map((l) => {
+            const lo = overrides.lessons[l.id] ?? {};
+            return {
+              ...l,
+              title: lo.title ?? l.title,
+              duration: lo.duration ?? l.duration,
+              content: lo.content ?? l.content,
+            };
+          }),
+        ...extraLessons,
+      ];
+
+      const lessons = orderedIds
+        ? [
+            ...orderedIds.map((id) => combined.find((l) => l.id === id)).filter(Boolean) as typeof combined,
+            ...combined.filter((l) => !orderedIds.includes(l.id)),
+          ]
+        : combined;
+
+      return { ...m, lessons, quiz: quizOverride ?? m.quiz };
     };
 
     // Static modules with overrides applied
@@ -103,5 +111,6 @@ export function useModuleStore() {
     saveQuiz: overridesHook.saveQuiz,
     addModule: overridesHook.addModule,
     deleteModule,
+    reorderLessons: overridesHook.reorderLessons,
   };
 }

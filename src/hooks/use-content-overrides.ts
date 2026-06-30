@@ -110,6 +110,13 @@ export function useContentOverrides() {
     }
   }, [overrides]);
 
+  const reorderLessons = useCallback(async (moduleId: string, orderedIds: string[]) => {
+    await save({
+      ...overrides,
+      lessonOrder: { ...overrides.lessonOrder, [moduleId]: orderedIds },
+    });
+  }, [overrides, save]);
+
   const deleteModuleById = useCallback(async (moduleId: string, isStatic: boolean) => {
     let next: ContentOverrides;
     if (isStatic) {
@@ -136,5 +143,6 @@ export function useContentOverrides() {
     saveQuiz,
     addModule,
     deleteModuleById,
+    reorderLessons,
   };
 }

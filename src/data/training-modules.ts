@@ -3,6 +3,7 @@ export interface Lesson {
   title: string;
   duration: string;
   content: string;
+  section?: string;
 }
 
 export interface QuizQuestion {
@@ -302,34 +303,101 @@ export const trainingModules: TrainingModule[] = [
   {
     id: "grass-thatch-soil",
     title: "Grass, Thatch & Soil",
-    description: "The biological foundation of lawn treatment — grass families, thatch and the six soil types you'll encounter on every round.",
+    description: "The biological foundation of lawn treatment — grass anatomy, germination, the main UK grass families, thatch management and core soil types.",
     icon: "Leaf",
     category: "Shared Foundations",
-    estimatedTime: "45 min",
+    estimatedTime: "60 min",
     roles: ["technician", "office"],
     stage: "role-foundations",
     isShared: true,
     lessons: [
       {
-        id: "gts1",
-        title: "Understanding Grass",
-        duration: "15 min",
+        id: "gts-anatomy",
+        title: "Grass Anatomy — How the Plant Is Built",
+        section: "Grass",
+        duration: "8 min",
         content:
-          "A lawn is not a single grass plant — it's a community of plants competing for light, water and nutrients. Understanding how grass grows, which families dominate UK domestic lawns, and how each behaves is the foundation for every treatment decision.\n\n**Grass anatomy:**\n- Roots: absorb water and nutrients; shallow roots = stressed lawn\n- Crown: the growth point just above soil level — damaging the crown kills the plant\n- Stem (culm): supports the leaf blades\n- Leaf blade: where photosynthesis happens; the visible part we assess\n- Stolons: above-ground runners (e.g. creeping red fescue, bent grass)\n- Rhizomes: below-ground stems — spread the plant horizontally underground\n\n**Germination vs establishment:** germination is when the seed sprouts; establishment is when the plant has developed enough root depth and leaf area to tolerate foot traffic and treatment. This distinction matters — weed control applied before establishment will damage seedlings.\n\n**The three dominant UK lawn grass families:**\n\n**Fescues (Festuca):**\nFine-leaved, drought-tolerant, shade-tolerant, low nutrition requirement. Slow to establish but long-lived. Common in fine/ornamental lawns. Red fescue is most susceptible to Red Thread disease. Performs best at lower mowing heights.\n\n**Bents (Agrostis):**\nExtremely fine-leaved, high maintenance, forms a dense creeping mat via stolons. Most common in golf greens and high-quality sports turf. Requires frequent mowing and high inputs — not typical in domestic lawns but you'll encounter it.\n\n**Ryegrass (Lolium perenne — Perennial Ryegrass):**\nThe most common grass in UK domestic lawns. Coarse, hardwearing, quick to establish (7–10 days germination), handles foot traffic well, responds well to fertiliser. Broad, shiny leaf blade. Lower shade tolerance than fescues. Most seed mixes for domestic renovations are ryegrass-dominant.\n\n**Seed mixes:** domestic lawns are almost always a blend — typically 70–80% ryegrass + fine fescues + bent. Older or ornamental lawns may be more fescue-dominant.",
+          "Before you can diagnose a lawn, you need to understand how a grass plant is structured. Every part of the plant has a specific function — and knowing which parts are vulnerable, and which are resilient, directly influences how you treat.\n\n**The key parts of a grass plant:**\n\n**Roots**\nAnchor the plant and absorb water and nutrients from the soil. Shallow root systems are a sign of stress — shallow-rooted lawns are the first to suffer in drought. Compaction, thatch and waterlogging all restrict root depth.\n\n**Crown**\nThe most important part of the plant. This is the growth point, located just above soil level, where new leaves emerge. Damage to the crown kills the plant. This is why scalping (mowing too short) is so damaging — you risk cutting into or exposing the crown.\n\n**Stem (culm)**\nThe short stem that supports the leaf structure. In turf grasses, the stem is usually very compressed — most of the visible plant is leaf.\n\n**Leaf blade**\nThe visible, green part of the plant. Photosynthesis happens here. When we assess a lawn, we're largely assessing the health of the leaf blade — its colour, density, and condition.\n\n**Stolons**\nAbove-ground horizontal runners that spread the plant across the soil surface. Creeping red fescue and bent grass spread via stolons — they can 'fill in' thin patches naturally if the crown isn't damaged.\n\n**Rhizomes**\nBelow-ground horizontal stems that allow the plant to spread underground. Some species (smooth-stalked meadow grass / Poa pratensis) spread via rhizomes, giving the sward a tight, mat-like quality.\n\n**Why anatomy matters in practice:**\n- A lawn with shallow roots is drought-vulnerable — aeration and correct watering advice helps\n- Scalping exposes or damages the crown — a common cause of bare patches\n- Stoloniferous grasses can self-repair thin areas — useful to know when advising on renovation\n- Understanding leaf density helps explain why fine fescues feel different underfoot to ryegrass lawns",
+      },
+      {
+        id: "gts-germination",
+        title: "Germination & Establishment — Why Timing Matters",
+        section: "Grass",
+        duration: "8 min",
+        content:
+          "Two terms you'll hear constantly when seeding work is involved: germination and establishment. They are not the same thing — and confusing them can lead to costly mistakes.\n\n**Germination**\nGermination is when the seed sprouts and the first shoot breaks through the soil surface. It requires:\n- Soil temperature above ~8°C (most UK grass species)\n- Consistent moisture at the seed surface\n- Good seed-to-soil contact — seeds need to touch the soil to absorb moisture\n\nTypical germination times at the right conditions:\n- Perennial ryegrass: 7–10 days\n- Fine fescues: 10–14 days\n- Bent grass: 14–21 days\n\n**Establishment**\nEstablishment is when the plant has developed sufficient root depth and leaf area to tolerate foot traffic and — critically — treatments. This takes considerably longer than germination.\n- Minimum time before weed control can be applied: **42–56 days after germination**\n- The seedlings must have been mown at least 2–3 times before herbicide is considered\n\n**Why this matters on a job:**\nApplying weed control too early — before the grass is established — will damage or kill the seedlings. If a customer has had overseeding (OVS) carried out, their account will flag this. In SA5, if OVS has been accepted, the SPN treatment switches to SPW (weed control delayed until establishment is confirmed).\n\n**Ideal seeding windows in the UK:**\n- **Autumn (September–October):** best overall — warm soil, cooler air, less competition from weeds and less drought risk\n- **Spring (March–April):** acceptable — soil warming but weed pressure rises as the season progresses\n- **Summer:** not recommended — drought risk before establishment is high\n- **Winter:** not recommended — soil too cold for reliable germination\n\n**Seed-to-soil contact:**\nThe single most common reason for poor germination is poor seed-to-soil contact. After overseeding, lightly raking or top-dressing beds the seed into the surface. A roller can also help. Without contact, the seed sits in the air, dries out and fails to germinate.",
+      },
+      {
+        id: "gts-fescues",
+        title: "Fine Fescues — Festuca",
+        section: "Grass",
+        duration: "8 min",
+        content:
+          "Fine fescues are the most shade-tolerant and drought-resistant of the three main UK lawn grass families. They're found in ornamental lawns, older domestic lawns and areas where the conditions suit a finer-textured sward.\n\n**Key characteristics:**\n- Very fine, narrow leaf blade — gives a dense, soft appearance\n- Low to moderate nitrogen requirement — doesn't need heavy feeding\n- Slow to establish but long-lived once in\n- Performs best at lower mowing heights (25–40mm)\n- Spreads via both tillers and, in some species (creeping red fescue), via stolons\n\n**Common fescue species in UK lawns:**\n\n**Creeping red fescue (Festuca rubra subsp. rubra)**\nThe most common fine fescue in domestic lawns. Spreads via stolons — fills in gaps naturally. Good shade and drought tolerance. Most susceptible species for **Red Thread disease** — a common summer fungal problem that presents as pink-red patches.\n\n**Chewings fescue (Festuca rubra subsp. commutata)**\nNon-creeping, forms dense clumps. Fine texture, good mowing quality. Used in luxury lawn mixes.\n\n**Hard fescue (Festuca longifolia)**\nExtremely drought tolerant, low maintenance. Used in low-input and wildflower-adjacent turf. Doesn't form the dense sward of other fescues.\n\n**Sheep's fescue (Festuca ovina)**\nVery fine, blue-green appearance. Low growing, low maintenance. Not common in domestic lawns but found in drier and upland locations.\n\n**How fescues feel and look:**\nA fescue-dominant lawn feels softer and denser than a ryegrass lawn. The leaf blade is significantly finer. In dry summers, fescues go dormant and brown but recover when moisture returns — they look worse in drought but are more drought-resilient than they appear.\n\n**Red Thread risk:**\nIf you see pink-red webbing or patches in a lawn, and fescues are present, Red Thread is the likely cause. The lawn is usually starved — nitrogen deficiency is the primary trigger. Feeding the lawn is the first response. Fungicide (curative) and liquid iron can assist recovery.",
+      },
+      {
+        id: "gts-ryegrass",
+        title: "Perennial Ryegrass — Lolium perenne",
+        section: "Grass",
+        duration: "8 min",
+        content:
+          "Perennial ryegrass is the backbone of the UK domestic lawn. If a customer has had a re-seed, renovation or new build lawn laid, it's almost certainly predominantly perennial ryegrass. Understanding it is non-negotiable.\n\n**Key characteristics:**\n- Broad, shiny leaf blade — the most recognisable feature; the underside of the leaf has a distinctive gloss\n- Coarse texture compared to fescues — feels firmer underfoot\n- Hardwearing — handles foot traffic better than any other domestic lawn grass\n- Fastest to establish: germinates in **7–10 days** under the right conditions\n- Excellent response to fertiliser — shows visible green-up rapidly after a feed\n- Lower shade tolerance than fescues — thins out significantly under tree canopies\n- Moderate drought tolerance — goes dormant in severe drought but recovers\n\n**Why it dominates domestic lawns:**\nDomestic customers want results quickly and need a lawn that can handle children, dogs and foot traffic. Perennial ryegrass delivers on all counts. It's also widely available, relatively cheap, and responds well to standard treatment programmes.\n\n**Typical seed mix proportions:**\n- Family/utility lawn: 70–80% perennial ryegrass, remainder fine fescue and bent\n- Ornamental/fine lawn: heavier fescue content, lower or no ryegrass\n- Sports/high-wear area: near 100% perennial ryegrass or specialist hard-wearing cultivars\n\n**On the job:**\nRecognising a ryegrass-dominant lawn helps set expectations. When a customer asks why their lawn doesn't look like a bowling green, the answer is often variety — a ryegrass lawn cannot achieve the same texture as a fine fescue or bent grass lawn without complete renovation.\n\n**Common problems in ryegrass lawns:**\n- Thins in shade — recommend overseed with fescue in shadier areas\n- Susceptible to Leatherjacket and Chafer Grub damage — both feed on roots; ryegrass has shallow roots and can be lifted easily when grubs are present\n- Leaf Spot disease can appear in wet, humid conditions",
+      },
+      {
+        id: "gts-bents",
+        title: "Bent Grasses & Meadow Grasses — Agrostis & Poa",
+        section: "Grass",
+        duration: "8 min",
+        content:
+          "The third group covers the finer and often more specialised grasses you'll encounter — primarily the bent grasses (Agrostis) and smooth-stalked meadow grass (Poa pratensis). Annual meadow grass (Poa annua) also belongs here and is a common problem in domestic lawns.\n\n**Bent Grasses (Agrostis)**\n\n**Browntop bent (Agrostis capillaris)**\nThe most common bent in UK domestic lawns. Extremely fine-leaved, forms a dense creeping mat via stolons. Often found in older, ornamental or low-mow lawns. Responds well to high inputs and tight mowing, which is why it dominates golf greens. In domestic lawns it's usually found as a component of a mixed sward, not the dominant species.\n\n- Fine texture — feels like a carpet when healthy\n- Spreads quickly via stolons — competitive ground-coverer\n- High maintenance at its best; lower inputs mean it cohabits with ryegrass and fescue\n- Prone to surface thatch build-up due to its dense mat-forming habit\n\n**Velvet bent (Agrostis canina)** and **Creeping bent (Agrostis stolonifera)**\nPrimarily golf/sports turf species. Unlikely in domestic lawns but you may encounter them on high-spec domestic projects. Very high maintenance.\n\n---\n\n**Smooth-stalked Meadow Grass (Poa pratensis)**\nA rhizomatous species — spreads underground, giving excellent repair and fill-in ability. More common in parks, sports surfaces and older domestic lawns. Hardy, dark green, tolerates close mowing. Slow to establish but fills in well once established.\n\n---\n\n**Annual Meadow Grass (Poa annua) — the problem species**\nUnlike its cousins, Poa annua is annual — it completes its life cycle in one year and seeds itself prolifically. You'll recognise it by:\n- Pale, yellow-green colour\n- Seed heads visible even at low mowing heights\n- Compressed habit — flat-growing\n- Often found in worn, compacted areas\n\nThere is **no selective herbicide** that controls Poa annua without damaging the surrounding grass. Cultural control only:\n- Avoid scalping (Poa annua thrives in low, stressed grass)\n- Overseed densely to crowd it out — a thick sward is the best defence\n- Aeration reduces compaction, which favours Poa annua establishment\n\nOn a doorstep, if a customer asks about the pale patches with seed heads, this is a common culprit — set honest expectations that it requires ongoing management, not a single treatment fix.",
+      },
+      {
+        id: "gts-thatch-what",
+        title: "Thatch — What It Is & Why It Builds Up",
+        section: "Thatch",
+        duration: "6 min",
+        content:
+          "Thatch is one of the most common problems in UK domestic lawns — and one of the most misunderstood by customers. Being able to explain it clearly on the doorstep is one of the most valuable skills a technician can develop.\n\n**What is thatch?**\nThatch is the layer of dead and dying organic matter — old stems, roots and cellular debris — that accumulates between the green leaf blades and the soil surface. It is a natural by-product of grass growth. A thin layer (under 10mm) is normal and beneficial, acting as cushioning and insulation. Beyond 10mm, it starts to cause problems.\n\n**Why does it build up?**\nThatch forms when organic matter accumulates faster than soil microbes can break it down. The balance tips in the wrong direction when:\n\n- **Over-fertilising with nitrogen:** rapid growth produces more organic matter than the soil's microbial population can decompose. The grass grows faster than the system can recycle it.\n- **Infrequent or absent aeration:** without air channels into the soil, microbial activity drops and decomposition slows significantly. Microbes need oxygen.\n- **Heavy or frequent watering:** keeps the surface saturated, reducing oxygen levels in the soil and slowing the breakdown process.\n- **Coarse grass varieties:** ryegrass produces more bulk organic matter per season than finer species like fescues or bents.\n- **Low mowing height:** compresses the thatch layer rather than allowing natural airflow around the base of the plant.\n- **Heavy clay or compacted soils:** poor drainage creates anaerobic (low-oxygen) conditions at the soil surface, where microbial breakdown is very slow.\n\n**A useful way to explain it to customers:**\nImagine the lawn has a recycling system — microbes in the soil break down old plant material and return it to the soil as nutrients. When you over-fertilise, water too heavily, or cut off the air supply by not aerating, that recycling system gets overwhelmed. The organic matter piles up faster than it can be processed — and that pile is thatch.",
+      },
+      {
+        id: "gts-thatch-effects",
+        title: "Thatch — Effects & How to Measure It",
+        section: "Thatch",
+        duration: "6 min",
+        content:
+          "Understanding what excess thatch actually does to a lawn helps you explain to customers why treatments are underperforming — and why scarification is worth investing in.\n\n**What does excess thatch do?**\n\n**Blocks water and air penetration**\nRainfall and fertiliser land on the thatch layer and often stay there, never reaching the rootzone below. Liquid iron applied to a heavily thatched lawn largely stays in the thatch — which is why the same lawn treated twice can still look yellow. This is one of the most common reasons treatments underperform. A customer complaining that their fertiliser 'doesn't seem to be working' may simply have a thatch problem.\n\n**Creates ideal disease conditions**\nWarm, moist, low-airflow environments are exactly what fungal pathogens need. Red Thread, Fusarium and other lawn diseases thrive in heavy thatch. If a lawn has recurring disease issues, high thatch is almost always a contributing factor.\n\n**Encourages shallow rooting**\nGrass roots will grow upward into the moist thatch rather than downward into the soil — it's the path of least resistance. Shallow roots mean the lawn is highly vulnerable to drought; the moment the thatch dries out, the grass has no reservoir to draw from.\n\n**Creates a spongy surface**\nWalk on a heavily thatched lawn and it feels soft or springy underfoot. Customers often describe it as 'bouncy'. The thatch is acting as a cushion between the foot and the soil. It can also create uneven ground as thatch builds up at different rates across the lawn.\n\n**Locks out nutrients**\nNutrients from fertiliser can become chemically bound up in the thatch layer and rendered unavailable to the plant. You're paying for feed that the grass can't access.\n\n---\n\n**How to measure thatch depth:**\nUse a soil probe or a penknife to cut a small plug from the lawn. Look at the profile in cross-section — you'll see three distinct layers:\n1. Green layer at the top (living grass)\n2. Brown/grey spongy layer between green and soil = thatch\n3. Dark soil beneath\n\nMeasure the thatch layer in millimetres:\n- **Under 10mm:** healthy — no action needed\n- **10–20mm:** moderate — preventive scarification recommended\n- **20–30mm:** significant — curative scarification required\n- **30mm+:** severe — deep scarification, likely multi-pass; manage customer expectations on recovery time\n\nAlways take a reading before quoting a scarification job — the depth directly affects the price weighting.",
       },
       {
         id: "gts2",
-        title: "Thatch — What It Is and Why It Matters",
-        duration: "15 min",
+        title: "Thatch — Control Methods & Scarification Weighting",
+        section: "Thatch",
+        duration: "6 min",
         content:
-          "Thatch is the layer of dead and dying organic matter — old stems, roots and debris — that accumulates between the green leaf blades and the soil surface. A thin layer (under 10mm) is normal and beneficial, acting as cushioning. Beyond that, it becomes a problem.\n\n**Causes of excess thatch:**\n- Over-fertilising with nitrogen (promotes rapid growth, more organic matter than the soil can break down)\n- Infrequent aeration (reduces the microbial activity that decomposes thatch naturally)\n- Heavy watering (keeps surface constantly moist, slowing breakdown)\n- Coarse grass varieties or low mowing (compresses organic layers)\n\n**Effects of excess thatch:**\n- Restricts water and air penetration — fertiliser and rain stay in the thatch, not the rootzone\n- Creates ideal conditions for fungal diseases (warm, moist, low airflow)\n- Encourages shallow root development — roots find the moist thatch easier than penetrating soil, making the lawn vulnerable to drought\n- Can create a 'springy' surface that feels soft underfoot\n\n**Control methods:**\n- Scarification: mechanical raking or flailing to physically remove thatch. The primary curative method. Should be followed by overseeding.\n- Aeration: improves drainage and stimulates microbial activity that breaks thatch down naturally. Annual preventive practice.\n- Avoiding over-application of nitrogen: slows the rate of organic matter accumulation.\n\n**Scarification difficulty weighting:**\nFor quoting scarification jobs, we use a five-factor difficulty weighting system:\n1. Thatch depth (0-30mm = normal, 30-60mm = +0.10, 60mm+ = +0.25)\n2. Lawn slope (level = 0, gentle = +0.10, steep = +0.25)\n3. Layout complexity (simple 1-2 zones = 0, difficult 3-5 = +0.10, complex 5+ = +0.25)\n4. Access restrictions (simple = 0, steps = +0.10)\n5. Disposal distance (next to lawn = 0, within 5m = +0.10, over 5m = +0.25)\n\nApply the total weighting as a multiplier to the base price for that lawn size.",
+          "Once you've identified excess thatch and explained the problem, the customer needs to know what can be done about it. There are three main approaches — one curative, two preventive.\n\n**Scarification (curative)**\nMechanical raking or flailing to physically remove accumulated thatch from the lawn. This is the primary curative method and the most impactful single service we offer for thatch management.\n\n- Uses rotating flails or spring-tine blades to tear the thatch out of the sward\n- Produces significant arisings (waste material) that must be collected and removed\n- Should always be followed by overseeding — scarification opens the soil and creates the ideal seedbed, but it also stresses the existing grass. Overseeding fills the gaps and thickens the sward.\n- Timing: primarily **autumn** (September–October) when soil is warm and growing conditions remain. A lighter spring pass may be done if the lawn is very thatchy coming out of winter.\n- Warn customers: the lawn will look worse before it looks better. A freshly scarified lawn can look quite rough — this is normal.\n\n**Aeration (preventive)**\nImproves drainage and introduces oxygen into the soil, which stimulates the microbial activity that breaks thatch down naturally. Regular annual aeration significantly slows thatch accumulation over time.\n\n- **Hollow-tine aeration** removes cores of soil and thatch — more effective for thatch management than solid-tine\n- **Solid-tine** improves airflow and drainage but doesn't remove material\n- For heavily thatched lawns, hollow-tine aeration combined with scarification is the gold standard\n\n**Balanced nutrition**\nAvoiding excessive nitrogen applications reduces the rate of organic matter production. This is a preventive measure, not a cure. Autumn programmes are deliberately low in nitrogen partly for this reason.\n\n---\n\n**Scarification difficulty weighting:**\nFor quoting scarification jobs, we use a five-factor difficulty weighting system. Each factor adds a multiplier to the base price for that lawn size:\n\n1. **Thatch depth** — 0–30mm = standard, 30–60mm = +0.10, 60mm+ = +0.25\n2. **Lawn slope** — level = 0, gentle slope = +0.10, steep = +0.25\n3. **Layout complexity** — simple 1–2 zones = 0, difficult 3–5 zones = +0.10, complex 5+ = +0.25\n4. **Access restrictions** — open access = 0, steps or tight gates = +0.10\n5. **Disposal distance** — next to lawn = 0, within 5m = +0.10, over 5m = +0.25\n\nAdd all applicable factors together and apply the total as a multiplier to the base price. A lawn with 40mm thatch, on a gentle slope, with 4 zones and steps = +0.30 total.",
+      },
+      {
+        id: "gts-clay",
+        title: "Clay Soil — Identification & Treatment",
+        section: "Soil Types",
+        duration: "6 min",
+        content:
+          "Clay is one of the most common soil types in UK gardens and the one that causes the most visible problems for lawns. Recognising it quickly and understanding what it means for treatment is a key field skill.\n\n**The squeeze test:**\nTake a handful of moist (not wet, not dry) soil from just below the surface. Squeeze it firmly, then press it with your thumb.\n- **Clay result:** holds a solid ball shape — and smears or ribbons when you press it. It feels dense and sticky. It won't crumble.\n\n**Why clay behaves the way it does:**\nClay particles are extremely small — much finer than sand or silt. This gives clay soil a huge surface area, which is why it retains water and nutrients so effectively. The downside is that the particles pack tightly together, leaving little room for air or water to move through.\n\n**Characteristics:**\n- Heavy and slow-draining — prone to waterlogging in wet periods\n- Prone to compaction under foot traffic and machinery\n- Sticky and plastic when wet; shrinks, cracks and sets hard when dry\n- High nutrient content — but nutrients may be inaccessible when structure is poor\n- Warms slowly in spring — lawns are slow to green up and come out of dormancy\n\n**What this means for treatment:**\n\n- **Aeration is essential** — hollow-tine aeration breaks up compaction, improves drainage and introduces oxygen. The single most impactful service for clay lawns.\n- **Wetting agents help** — in dry periods, clay can become hydrophobic (water-repellent), causing water to run off rather than penetrate. Wetting agents restore penetration.\n- **Nutrients are not usually the limiting factor** — clay holds nutrients well. The problem is structure and drainage, not starvation.\n- **Fertiliser timing matters** — applying granular fertiliser to a waterlogged clay lawn risks runoff and waste. Wait for the surface to drain.\n\n**Weeds that point to clay soil:**\n- Creeping buttercup — wet, compacted conditions\n- Greater plantain — compacted soil\n- Dock — wet, heavy soil\n\nIf you see these weeds alongside a slow-draining, puddling lawn, clay is almost certainly the underlying soil.",
+      },
+      {
+        id: "gts-loam",
+        title: "Loam Soil — Identification & Treatment",
+        section: "Soil Types",
+        duration: "5 min",
+        content:
+          "Loam is the gold standard for lawns — a balanced mixture of sand, silt and clay that gives good drainage, good moisture retention and good nutrient-holding capacity. Most treatments work exactly as expected on loam.\n\n**The squeeze test:**\nTake a handful of moist soil from just below the surface. Squeeze it firmly.\n- **Loam result:** holds a ball shape but crumbles when you prod or press it. It's not sticky, it's not dust. It holds together just enough, then lets go.\n\n**Why loam works so well:**\nLoam sits in the middle ground. The sand fraction keeps drainage open. The clay fraction retains moisture and nutrients. The silt fraction fills the gaps and gives a stable structure. None of the extremes of clay (too wet, too compacted) or sand (too dry, too hungry) apply.\n\n**Characteristics:**\n- Good drainage without being drought-prone\n- Good nutrient retention without waterlogging\n- Easy to work — crumbles well, doesn't compact severely\n- Most UK domestic gardens have a loam component, though it's rarely pure loam\n- Warms at a moderate rate in spring\n\n**What this means for treatment:**\n- Responds well to the full standard programme — fertiliser, herbicides, iron, wetting agents all behave predictably\n- Aeration is still beneficial annually but less urgent than on clay or sandy soils\n- Irrigation advice: moderately drought-tolerant, but deep watering during dry spells is better than frequent shallow watering\n- Standard fertiliser rates and timings apply without adjustment\n\n**On the doorstep:**\nIf a customer's lawn is on loam and still struggling, the cause is more likely to be cultural (wrong mowing height, poor watering habits, disease, shade) rather than a fundamental soil problem. Loam is forgiving — look elsewhere for the explanation.",
       },
       {
         id: "gts3",
-        title: "Soil Types, pH and the Squeeze Test",
-        duration: "15 min",
+        title: "Sandy Soil — Identification & Treatment",
+        section: "Soil Types",
+        duration: "6 min",
         content:
-          "Grass is only as healthy as the soil it grows in. Every lawn visit is an opportunity to assess the soil beneath — even a 10-second squeeze test gives useful information.\n\n**The six soil types:**\n\n**Clay:** Heavy, slow-draining, prone to waterlogging and compaction. High nutrient retention — lots of nutrients in the soil, but they may not be accessible if the structure is poor. Sticky when wet, sets hard when dry. Benefits greatly from aeration and wetting agents.\n\n**Loam:** The ideal mix of sand, silt and clay. Well-draining, good nutrient retention, easy to work. Most UK domestic gardens have some loam component. Responds well to most treatments.\n\n**Sandy:** Fast-draining, low nutrient retention (nutrients leach through quickly), warms up fast in spring. Drought-prone in summer. Needs more frequent fertilising and benefits from wetting agents to help water penetration.\n\n**Silty:** Smooth, fine-textured, compacts easily. Better nutrient retention than sandy but prone to surface capping (a hard crust forms that water struggles to penetrate). Benefits from aeration.\n\n**Peaty:** Dark, spongy, acidic (low pH), retains moisture well. High organic matter. Common in areas with moorland soils. May need liming to raise pH for grass.\n\n**Chalky:** Pale, free-draining, alkaline (high pH). Shallow — often thin topsoil over chalk bedrock. Very free-draining. Grass can yellow due to iron and manganese lockout at high pH.\n\n**The squeeze test (field assessment):**\nTake a handful of moist (not wet) soil and squeeze it firmly:\n- Clay: holds a solid ball, smears when touched — sticky\n- Loam: holds a ball shape but crumbles when prodded\n- Sandy: barely holds shape, crumbles immediately\n- Silty: holds shape but feels silky/smooth\n\n**Soil pH and grass:**\nMost UK grass varieties prefer a pH of 6.0–7.0. Below 6.0 (acidic), grass struggles and moss thrives. Above 7.5 (alkaline), iron and manganese become locked out, causing yellowing. Clay and peaty soils tend acidic; chalky soils are alkaline.\n\n**What weeds tell you about the soil:**\n- Clover → low nitrogen\n- Buttercup → wet, compacted\n- Plantain → compacted\n- Yarrow → poor, drought-stressed\n- Moss → acidic, shaded, poorly drained, or under-fertilised",
+          "Sandy soil is at the opposite end of the spectrum from clay. Where clay holds everything, sand lets everything go — water drains through quickly, nutrients leach away and the lawn dries out fast. Lawns on sandy soil have very specific needs.\n\n**The squeeze test:**\nTake a handful of moist soil from just below the surface. Squeeze it firmly.\n- **Sandy result:** barely holds shape at all — crumbles immediately when you open your hand, or won't compact into a ball in the first place. Feels gritty.\n\n**Why sandy soil behaves the way it does:**\nSand particles are large — much larger than silt or clay. The spaces between particles are big enough for water to drain through freely and quickly. There's no surface area to hold onto water or nutrients the way clay does.\n\n**Characteristics:**\n- Very free-draining — water moves through rapidly, especially after rain\n- Low nutrient retention — fertiliser leaches downward, especially nitrogen and potassium\n- Warms up fast in spring — good for early green-up and germination\n- Drought-prone in summer — no reservoir of moisture to sustain the grass\n- Light and easy to work\n\n**What this means for treatment:**\n\n- **Fertiliser strategy:** more frequent applications at lower rates. A heavy single application will leach before the grass can use it — split feeds are more effective.\n- **Wetting agents are highly valuable:** in dry periods, sandy soils can become hydrophobic (the sand particles develop a waxy coating that repels water — it balls off rather than penetrating). Wetting agents restore absorption and help water reach the rootzone.\n- **Irrigation advice:** infrequent but deep watering is better than light daily watering. Deep watering encourages roots to follow moisture downward — building drought resilience. Light daily watering keeps roots shallow.\n- **Overseeding:** sandy lawns thin quickly under drought. Overseeding with drought-tolerant species (hard fescue, chewings fescue) improves resilience.\n\n**Weeds that point to sandy soil:**\n- Yarrow — thrives in dry, poor, infertile conditions\n- Trefoil/clover — nitrogen-fixing, outcompetes starved grass\n- Mouse-ear chickweed — low-fertility indicator\n\n**Soil pH and grass (applies to all soil types):**\nRegardless of soil type, pH directly affects whether nutrients are available to the plant. Most UK lawn grasses prefer **pH 6.0–7.0**.\n- Below 6.0 (acidic): grass struggles, moss and acid-tolerant weeds thrive — liming can help\n- Above 7.5 (alkaline): iron and manganese become chemically locked out, causing yellowing\n\nNote: silty, peaty and chalky soils are covered in the Advanced Soil Types module.",
       },
     ],
     quiz: {
@@ -344,6 +412,42 @@ export const trainingModules: TrainingModule[] = [
         },
         {
           id: "gts-q2",
+          question: "What is the crown of a grass plant and why does it matter?",
+          options: [
+            "The seed head — the part that produces new seeds",
+            "The above-ground runner that spreads the plant sideways",
+            "The growth point just above soil level — damaging it kills the plant",
+            "The top 5mm of the root system",
+          ],
+          correct: 2,
+          explanation: "The crown is the growth point where new leaves emerge, located just above soil level. Scalping or damaging the crown kills the plant — which is why cutting too short causes bare patches.",
+        },
+        {
+          id: "gts-q3",
+          question: "A customer has had overseeding (OVS) carried out six weeks ago. They ask when weed control can be applied. What do you tell them?",
+          options: [
+            "Immediately — the grass is established enough after three weeks",
+            "Not yet — weed control must wait at least 42–56 days from germination and at least 2–3 mows",
+            "Weed control cannot be applied for 6 months after seeding",
+            "It depends on the weed species present",
+          ],
+          correct: 1,
+          explanation: "The grass must be fully established — which means 42–56 days from germination and having been mown at least 2–3 times. Applying herbicide too early damages or kills the seedlings.",
+        },
+        {
+          id: "gts-q4",
+          question: "Which fine fescue species is most associated with Red Thread disease in domestic lawns?",
+          options: [
+            "Hard fescue (Festuca longifolia)",
+            "Sheep's fescue (Festuca ovina)",
+            "Creeping red fescue (Festuca rubra subsp. rubra)",
+            "Chewings fescue (Festuca rubra subsp. commutata)",
+          ],
+          correct: 2,
+          explanation: "Creeping red fescue is the most susceptible species to Red Thread. The primary trigger is nitrogen deficiency — feeding the lawn is the first response alongside fungicide if needed.",
+        },
+        {
+          id: "gts-q5",
           question: "What is thatch?",
           options: [
             "A type of soil fungus that causes brown patches",
@@ -352,33 +456,38 @@ export const trainingModules: TrainingModule[] = [
             "The crown area of the grass plant",
           ],
           correct: 1,
-          explanation: "Thatch is the accumulated layer of dead and dying organic matter (stems, roots, debris) between the living grass and the soil surface.",
+          explanation: "Thatch is the accumulated layer of dead and dying organic matter (stems, roots, debris) between the living grass and the soil surface. Under 10mm is normal; beyond that it becomes a problem.",
         },
         {
-          id: "gts-q3",
-          question: "A customer's lawn has a lot of clover throughout. This most likely indicates:",
+          id: "gts-q6",
+          question: "You squeeze a handful of moist soil and it holds a firm ball but smears when you press it with your thumb. What soil type is this?",
+          options: ["Sandy soil", "Loam soil", "Clay soil", "Silty soil"],
+          correct: 2,
+          explanation: "Clay soil holds a firm ball and smears when touched — it's sticky, slow-draining and prone to compaction.",
+        },
+        {
+          id: "gts-q7",
+          question: "A sandy soil lawn needs fertilising. Compared to a loam lawn, how should you approach the application?",
           options: [
-            "The soil is too alkaline",
-            "Low nitrogen — clover fixes its own and thrives where grass is starved",
-            "The soil is waterlogged and compacted",
-            "A fungal disease is present",
+            "Apply at double the rate — nutrients wash through sandy soil faster",
+            "Apply at lower rates more frequently — nutrients leach through quickly",
+            "Apply once per year — sandy soils retain nutrients well",
+            "No difference — soil type doesn't affect fertiliser requirements",
           ],
           correct: 1,
-          explanation: "Clover is a nitrogen-fixer — it thrives where grass is under-fed. Restoring a proper nitrogen programme is the most effective long-term control.",
+          explanation: "Sandy soils have low nutrient retention — fertiliser leaches through quickly, especially after rain. More frequent, lower-rate applications maintain a steadier feed without waste or scorch risk.",
         },
         {
-          id: "gts-q4",
-          question: "You squeeze a handful of moist soil and it holds a firm ball but smears when you touch it. This indicates:",
-          options: ["Sandy soil", "Loam soil", "Clay soil", "Chalky soil"],
+          id: "gts-q8",
+          question: "Annual meadow grass (Poa annua) is present throughout a customer's lawn. What is the most effective treatment?",
+          options: [
+            "Apply a selective herbicide — this will remove Poa annua without harming the surrounding grass",
+            "Apply a total herbicide and re-seed the entire lawn",
+            "Cultural management only — dense overseeding and avoiding scalping; no selective herbicide is available",
+            "Apply iron sulphate — this will suppress Poa annua effectively",
+          ],
           correct: 2,
-          explanation: "Clay soil holds a firm ball shape and smears when touched — it's sticky and slow-draining.",
-        },
-        {
-          id: "gts-q5",
-          question: "What is the recommended soil pH range for most UK lawn grasses?",
-          options: ["4.5–5.5", "6.0–7.0", "7.5–8.5", "5.0–6.0"],
-          correct: 1,
-          explanation: "Most UK grass varieties perform best at pH 6.0–7.0. Below 6.0, moss and acid-loving weeds dominate; above 7.5, iron and manganese lock out causing yellowing.",
+          explanation: "There is no selective herbicide that controls Poa annua without damaging surrounding grass. Cultural control — competitive overseeding and maintaining mowing height — is the only realistic approach.",
         },
       ],
     },

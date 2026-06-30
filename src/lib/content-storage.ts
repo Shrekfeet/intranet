@@ -35,6 +35,7 @@ export interface ContentOverrides {
   quizOverrides: Record<string, Quiz>;
   addedModules: TrainingModule[];
   removedModules: string[];
+  lessonOrder: Record<string, string[]>;
 }
 
 function normalize(raw: Partial<ContentOverrides>): ContentOverrides {
@@ -46,6 +47,7 @@ function normalize(raw: Partial<ContentOverrides>): ContentOverrides {
     quizOverrides: raw.quizOverrides ?? {},
     addedModules: raw.addedModules ?? [],
     removedModules: raw.removedModules ?? [],
+    lessonOrder: raw.lessonOrder ?? {},
   };
 }
 
