@@ -92,7 +92,7 @@ export const routeChecklist: RouteChecklistItem[] = [
 ];
 
 // ----- Interactive: weather decision triager -----
-export type WeatherJobType = "mowing" | "spraying" | "scarification" | "fertiliser";
+export type WeatherJobType = "spraying" | "scarification" | "fertiliser";
 
 export interface WeatherInput {
   jobType: WeatherJobType;
@@ -124,16 +124,6 @@ export function evaluateWeather(input: WeatherInput): { verdict: WeatherVerdict;
     if (input.rainNext2h || input.rainNow) {
       escalate("stop");
       reasons.push("Rain forecast within 2 hours — product won't bind.");
-    }
-  }
-
-  if (input.jobType === "mowing") {
-    if (input.soilSaturated) {
-      escalate("stop");
-      reasons.push("Soil saturated — wheels will rut the lawn.");
-    } else if (input.rainNow) {
-      escalate("caution");
-      reasons.push("Light rain on dry-base turf is OK; collect clippings.");
     }
   }
 

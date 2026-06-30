@@ -44,12 +44,12 @@ const generalItems: SidebarItem[] = [
   { title: "Welcome Pack", url: "/welcome", icon: PartyPopper, exact: true },
   { title: "How-To Guides", url: "/how-to", icon: HelpCircle },
   { title: "Seasonal Calendar", url: "/seasonal-calendar", icon: CalendarDays, exact: true },
-  { title: "Scheduling Hub", url: "/scheduling", icon: Calendar, exact: true },
   { title: "Policies & Docs", url: "/policies", icon: FileText, exact: true },
 ];
 
 const operationsItems: SidebarItem[] = [
   { title: "Troubleshooting Hub", url: "/operations", icon: Wrench, exact: true },
+  { title: "Scheduling Hub", url: "/scheduling", icon: Calendar, exact: true },
 ];
 
 const knowledgeItems: SidebarItem[] = [

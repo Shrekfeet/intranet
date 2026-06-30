@@ -112,7 +112,6 @@ function WeatherTriager() {
   } as const;
 
   const jobs: { value: WeatherJobType; label: string }[] = [
-    { value: "mowing", label: "Mowing" },
     { value: "spraying", label: "Spraying" },
     { value: "scarification", label: "Scarification" },
     { value: "fertiliser", label: "Fertiliser" },
