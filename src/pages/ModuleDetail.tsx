@@ -19,14 +19,70 @@ const INPUT_CLS = "w-full rounded-lg border bg-background px-3 py-2 text-sm font
 const TEXTAREA_CLS = `${INPUT_CLS} resize-none`;
 
 const FORMAT_GUIDE = (
-  <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 text-xs font-body text-amber-800">
-    <strong>Formatting guide:</strong>{" "}
-    <code className="bg-amber-100 px-1 rounded">**text**</code> = bold heading &nbsp;·&nbsp;
-    <code className="bg-amber-100 px-1 rounded">- item</code> = bullet &nbsp;·&nbsp;
-    <code className="bg-amber-100 px-1 rounded">1. item</code> = numbered list &nbsp;·&nbsp;
-    blank line = new paragraph
+  <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-xs font-body text-amber-800 space-y-1.5">
+    <div>
+      <strong>Text:</strong>{" "}
+      <code className="bg-amber-100 px-1 rounded">**text**</code> = bold &nbsp;·&nbsp;
+      <code className="bg-amber-100 px-1 rounded">- item</code> = bullet &nbsp;·&nbsp;
+      <code className="bg-amber-100 px-1 rounded">1. item</code> = numbered &nbsp;·&nbsp;
+      blank line = new paragraph
+    </div>
+    <div>
+      <strong>Images:</strong>{" "}
+      <code className="bg-amber-100 px-1 rounded">![Caption|size|align](url)</code>
+      &nbsp;— size: <code className="bg-amber-100 px-1 rounded">small</code>{" "}
+      <code className="bg-amber-100 px-1 rounded">medium</code>{" "}
+      <code className="bg-amber-100 px-1 rounded">large</code>{" "}
+      <code className="bg-amber-100 px-1 rounded">full</code>{" "}
+      &nbsp;· align: <code className="bg-amber-100 px-1 rounded">left</code>{" "}
+      <code className="bg-amber-100 px-1 rounded">center</code>{" "}
+      <code className="bg-amber-100 px-1 rounded">right</code>
+      &nbsp;· e.g. <code className="bg-amber-100 px-1 rounded">![Team photo|medium|center](/intranet/images/team.jpg)</code>
+    </div>
   </div>
 );
+
+// ── Image block ───────────────────────────────────────────────────────────────
+
+const IMAGE_RE = /^!\[([^\]]*)\]\(([^)]+)\)\s*$/;
+
+const SIZE_W: Record<string, string> = {
+  small:  "w-full sm:w-1/3",
+  medium: "w-full sm:w-1/2",
+  large:  "w-full md:w-3/4",
+  full:   "w-full",
+};
+const ALIGN_MX: Record<string, string> = {
+  left:   "mr-auto",
+  center: "mx-auto",
+  right:  "ml-auto",
+};
+
+function ImageBlock({ raw }: { raw: string }) {
+  const m = raw.match(IMAGE_RE);
+  if (!m) return null;
+  const [, altPart, src] = m;
+  const parts = altPart.split("|").map((p) => p.trim());
+  const caption = parts[0] ?? "";
+  const size    = parts[1] && SIZE_W[parts[1]]  ? parts[1]  : "full";
+  const align   = parts[2] && ALIGN_MX[parts[2]] ? parts[2] : "center";
+
+  return (
+    <figure className={cn("my-4", SIZE_W[size], ALIGN_MX[align])}>
+      <img
+        src={src}
+        alt={caption}
+        className="w-full rounded-lg border object-cover"
+        loading="lazy"
+      />
+      {caption && (
+        <figcaption className="text-center text-xs font-body text-muted-foreground mt-1.5 italic">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
 
 // ── Content renderer ─────────────────────────────────────────────────────────
 
@@ -36,6 +92,8 @@ function LessonContent({ content }: { content: string }) {
       {content.split("\n\n").map((block, bi) => (
         <div key={bi} className="mb-3">
           {block.split("\n").map((line, li) => {
+            if (IMAGE_RE.test(line))
+              return <ImageBlock key={li} raw={line} />;
             if (line.startsWith("**") && line.endsWith("**"))
               return <p key={li} className="font-semibold text-foreground">{line.replace(/\*\*/g, "")}</p>;
             if (line.startsWith("- "))
