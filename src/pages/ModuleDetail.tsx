@@ -134,7 +134,11 @@ function renderLine(line: string, key: number): React.ReactNode {
 }
 
 function renderLines(text: string): React.ReactNode {
-  return text.split("\n").map((line, i) => renderLine(line, i));
+  return text.split("\n\n").map((para, pi) => (
+    <div key={pi} className="mb-3">
+      {para.split("\n").map((line, li) => renderLine(line, li))}
+    </div>
+  ));
 }
 
 function LessonContent({ content }: { content: string }) {
