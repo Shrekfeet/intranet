@@ -804,7 +804,7 @@ const ModuleDetail = () => {
                   {completed ? <CheckCircle2 className="h-6 w-6 text-success" /> : <Circle className="h-6 w-6 text-muted-foreground" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-body font-medium text-base">{lesson.title}</h3>
+                  <h3 className="font-body font-medium text-base">{renderInline(lesson.title)}</h3>
                   <span className="text-xs text-muted-foreground font-body">{lesson.duration}</span>
                 </div>
 
