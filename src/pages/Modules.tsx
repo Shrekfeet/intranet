@@ -286,8 +286,14 @@ const Modules = () => {
                         className="block p-6"
                       >
                         <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
+                          {mod.emoji && (
+                            <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-2xl select-none hidden lg:flex">
+                              {mod.emoji}
+                            </div>
+                          )}
                           <div className="flex-1 pr-8">
                             <div className="flex flex-wrap items-center gap-2 text-xs font-body font-medium uppercase tracking-wider text-muted-foreground">
+                              {mod.emoji && <span className="text-base lg:hidden">{mod.emoji}</span>}
                               <span>{mod.isShared ? "Shared module" : "Role-specific module"}</span>
                               <span>•</span>
                               <span>{mod.category}</span>
