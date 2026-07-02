@@ -44,6 +44,18 @@ const FORMAT_GUIDE = (
       <strong>Two columns</strong> (image + text side by side on desktop, stacked on mobile):{" "}
       <code className="bg-amber-100 px-1 rounded whitespace-pre">{"[cols]\n![Caption|full](/intranet/images/x.jpg)\n|||\nYour text here\n[/cols]"}</code>
     </div>
+    <div>
+      <strong>Headings:</strong>{" "}
+      <code className="bg-amber-100 px-1 rounded">## Heading</code> = section heading &nbsp;·&nbsp;
+      <code className="bg-amber-100 px-1 rounded">### Subheading</code> = smaller heading
+    </div>
+    <div>
+      <strong>Coloured blocks:</strong>{" "}
+      <code className="bg-amber-100 px-1 rounded">[tip]…[/tip]</code> green &nbsp;·&nbsp;
+      <code className="bg-amber-100 px-1 rounded">[warning]…[/warning]</code> amber &nbsp;·&nbsp;
+      <code className="bg-amber-100 px-1 rounded">[alert]…[/alert]</code> red &nbsp;·&nbsp;
+      <code className="bg-amber-100 px-1 rounded">[note]…[/note]</code> blue
+    </div>
     <div className="border-t border-amber-200 pt-1.5">
       <strong>Tip:</strong> Use blank lines between paragraphs. Text above or below a{" "}
       <code className="bg-amber-100 px-1 rounded">[cols]</code> block spans the full width as normal.
@@ -122,6 +134,10 @@ function renderInline(text: string): React.ReactNode {
 function renderLine(line: string, key: number): React.ReactNode {
   if (IMAGE_RE.test(line))
     return <ImageBlock key={key} raw={line} />;
+  if (line.startsWith("## "))
+    return <h2 key={key} className="font-body font-semibold text-foreground text-base mt-5 mb-1 border-b border-border pb-1">{renderInline(line.slice(3))}</h2>;
+  if (line.startsWith("### "))
+    return <h3 key={key} className="font-body font-semibold text-foreground text-sm mt-3 mb-0.5">{renderInline(line.slice(4))}</h3>;
   if (line.startsWith("**") && line.endsWith("**"))
     return <p key={key} className="font-semibold text-foreground">{line.slice(2, -2)}</p>;
   if (line.startsWith("- "))
@@ -141,18 +157,28 @@ function renderLines(text: string): React.ReactNode {
   ));
 }
 
+const BLOCK_STYLES: Record<string, string> = {
+  tip:     "bg-green-50 border-l-4 border-green-400 text-green-900",
+  warning: "bg-amber-50 border-l-4 border-amber-400 text-amber-900",
+  alert:   "bg-red-50 border-l-4 border-red-400 text-red-900",
+  note:    "bg-blue-50 border-l-4 border-blue-400 text-blue-900",
+};
+const BLOCK_LABELS: Record<string, string> = {
+  tip: "Tip", warning: "Warning", alert: "Alert", note: "Note",
+};
+
 function LessonContent({ content }: { content: string }) {
   const normalised = content.replace(/\r\n/g, "\n");
 
-  // Split on [cols]...[/cols] so columns work anywhere — not just at block starts
-  const COLS_RE = /\[cols\]([\s\S]*?)\[\/cols\]/g;
+  // Unified block parser: [cols], [tip], [warning], [alert], [note]
+  const BLOCK_RE = /\[(cols|tip|warning|alert|note)\]([\s\S]*?)\[\/\1\]/g;
   const segments: React.ReactNode[] = [];
   let last = 0;
   let m: RegExpExecArray | null;
   let key = 0;
 
-  while ((m = COLS_RE.exec(normalised)) !== null) {
-    // Text before this [cols] block
+  while ((m = BLOCK_RE.exec(normalised)) !== null) {
+    // Text before this block
     if (m.index > last) {
       const before = normalised.slice(last, m.index).replace(/^\n+|\n+$/g, "");
       if (before) {
@@ -165,17 +191,30 @@ function LessonContent({ content }: { content: string }) {
         );
       }
     }
-    // The [cols] block itself
-    const inner = m[1].trim();
-    const sepIdx = inner.indexOf("\n|||\n");
-    const left = sepIdx >= 0 ? inner.slice(0, sepIdx).trim() : inner;
-    const right = sepIdx >= 0 ? inner.slice(sepIdx + 5).trim() : "";
-    segments.push(
-      <div key={key++} className="flex flex-col sm:flex-row gap-5 my-3 items-start">
-        <div className="w-full sm:w-1/2 flex-shrink-0">{renderLines(left)}</div>
-        <div className="w-full sm:w-1/2">{renderLines(right)}</div>
-      </div>,
-    );
+
+    const blockType = m[1];
+    const inner = m[2];
+
+    if (blockType === "cols") {
+      const trimmed = inner.trim();
+      const sepIdx = trimmed.indexOf("\n|||\n");
+      const left = sepIdx >= 0 ? trimmed.slice(0, sepIdx).trim() : trimmed;
+      const right = sepIdx >= 0 ? trimmed.slice(sepIdx + 5).trim() : "";
+      segments.push(
+        <div key={key++} className="flex flex-col sm:flex-row gap-5 my-3 items-center">
+          <div className="w-full sm:w-1/2 flex-shrink-0">{renderLines(left)}</div>
+          <div className="w-full sm:w-1/2">{renderLines(right)}</div>
+        </div>,
+      );
+    } else {
+      segments.push(
+        <div key={key++} className={`rounded-r-lg px-4 py-3 my-3 ${BLOCK_STYLES[blockType]}`}>
+          <p className="font-body font-semibold text-sm mb-1.5">{BLOCK_LABELS[blockType]}</p>
+          <div className="text-sm">{renderLines(inner.trim())}</div>
+        </div>,
+      );
+    }
+
     last = m.index + m[0].length;
   }
 
@@ -608,6 +647,17 @@ const ModuleDetail = () => {
 
   useEffect(() => { window.scrollTo(0, 0); }, [moduleId]);
 
+  useEffect(() => {
+    if (!openLesson) return;
+    const el = document.getElementById(`lesson-${openLesson}`);
+    if (!el) return;
+    const t = setTimeout(() => {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: "smooth" });
+    }, 60);
+    return () => clearTimeout(t);
+  }, [openLesson]);
+
   const mod = allModules.find((m) => m.id === moduleId);
 
   if (!mod) {
@@ -754,7 +804,7 @@ const ModuleDetail = () => {
           const showSectionHeader = lesson.section && lesson.section !== mod.lessons[i - 1]?.section;
 
           return (
-            <div key={lesson.id}>
+            <div key={lesson.id} id={`lesson-${lesson.id}`}>
             {showSectionHeader && (
               <div className={cn("flex items-center gap-2 px-1 mb-2", i > 0 && "mt-5")}>
                 {isAdmin && editingSection === lesson.section ? (
