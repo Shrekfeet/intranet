@@ -1164,60 +1164,18 @@ export const trainingModules: TrainingModule[] = [
     ],
   },
   {
-    id: "weed-control-mastery",
-    title: "Weed Control: Fundamentals to Mastery",
+id: "weed-control-mastery",
+    title: "Weed Control \u2014 Application and Mastery",
     description:
       "A complete grounding in how weed control actually works \u2014 biology, identification, control methods, herbicide families, application craft and integrated decision-making.",
     icon: "Sprout",
     emoji: "🌿",
     category: "Shared Knowledge",
-    estimatedTime: "2 h 30 min",
+    estimatedTime: "1 h 25 min",
     roles: ["technician", "office"],
     stage: "lawn-knowledge",
     isShared: true,
     lessons: [
-      {
-        id: "wc1",
-        title: "What a Weed Actually Is",
-        duration: "10 min",
-        content:
-          "A weed is simply a plant growing where it is not wanted. There is nothing biologically special about a 'weed' \u2014 a wildflower in a meadow can become a weed on a customer's lawn.\n\n**Three things make a plant a problem in turf:**\n1. It out-competes the grass for light, water or nutrients\n2. It looks visually disruptive (yellow flowers, broad leaves, bare patches around it)\n3. It spreads quickly if left alone\n\nUnderstanding 'why this is a weed here' is the start of every good treatment decision.",
-      },
-      {
-        id: "wc2",
-        title: "How Weeds Live and Spread",
-        duration: "12 min",
-        content:
-          "Weeds are grouped by their life cycle:\n\n**Annuals** \u2014 germinate, flower, seed and die in a single year (e.g. annual meadow grass, chickweed). Best controlled before they set seed.\n\n**Biennials** \u2014 grow leaves in year one, flower and seed in year two. Hit them in year one while they're still a rosette.\n\n**Perennials** \u2014 live for many years and regrow from roots, runners or rhizomes (e.g. dandelion, plantain, clover). These are the bulk of lawn weeds and the hardest to kill.\n\n**How they spread:**\n- Seed \u2014 wind, mowers, shoes, birds, soil disturbance\n- Stolons (above-ground runners) \u2014 clover, creeping buttercup\n- Rhizomes (underground stems) \u2014 couch grass, yarrow\n- Tap roots \u2014 dandelion, dock \u2014 break the root and you get two plants\n\n**The seed bank rule:** every soil contains thousands of dormant weed seeds per square metre. You are never 'clearing' the seed bank \u2014 you are managing what germinates.",
-      },
-      {
-        id: "wc3",
-        title: "Identifying the Common UK Lawn Weeds",
-        duration: "15 min",
-        content:
-          "**Broadleaf perennials (most common):**\n- Dandelion \u2014 deep tap root, jagged leaves, yellow flower, parachute seeds\n- Daisy \u2014 small rosettes, white-petal flower, spreads by runners\n- Plantain (greater & ribwort) \u2014 flat ribbed leaves, very tough\n- White clover \u2014 three-leaf trefoil, white flower, nitrogen-fixing\n- Creeping buttercup \u2014 glossy lobed leaves, runners, loves wet compacted ground\n- Self-heal \u2014 low purple flower spikes, mat-forming\n- Yarrow \u2014 feathery leaves, drought-tolerant, hard to kill\n- Speedwell \u2014 tiny blue flowers, mat-forming, notoriously herbicide-resistant\n- Mouse-ear chickweed \u2014 hairy small leaves, low rosettes\n\n**Grass weeds:**\n- Annual meadow grass (Poa annua) \u2014 pale, seeds at very low height, almost universal\n- Yorkshire fog \u2014 soft, hairy, grey-green tufts\n- Couch grass \u2014 coarse blades, aggressive rhizomes\n\n**Moss** \u2014 not a weed in the herbicide sense, but treated as one. A symptom of shade, wet, low fertility, scalping or compaction.",
-      },
-      {
-        id: "wc4",
-        title: "Why Weeds Appear \u2014 Root Causes",
-        duration: "10 min",
-        content:
-          "Spraying without fixing the cause means the same weeds return every season. Always ask: why is this lawn vulnerable?\n\n**Common underlying causes:**\n- Thin or sparse grass \u2014 bare soil invites weed seeds\n- Low fertility \u2014 clover and yarrow thrive where grass is starved\n- Compaction \u2014 plantain, buttercup, annual meadow grass love hard ground\n- Poor drainage \u2014 moss, buttercup, sedges\n- Scalping \u2014 weakens grass, lets low-growing weeds take over\n- Shade \u2014 moss and woodland weeds dominate\n- Recent disturbance \u2014 renovation brings buried seeds to the surface\n\n**The professional mindset:** weed control + lawn improvement always go together. Treatment kills what's there now; dense healthy grass is what stops the next wave.",
-      },
-      {
-        id: "wc5",
-        title: "Integrated Weed Management",
-        duration: "12 min",
-        content:
-          "Integrated Weed Management (IWM) combines several methods so you rely less on any single one \u2014 especially chemicals.\n\n**The four pillars:**\n1. Cultural control \u2014 mowing height, feeding, watering, overseeding, aeration, scarification\n2. Mechanical / physical control \u2014 hand-pulling, hoeing, removing seed heads\n3. Biological control \u2014 encouraging grass to out-compete weeds\n4. Chemical control \u2014 selective herbicides when other methods aren't enough\n\nA technician who reaches for the sprayer first is not yet a professional. A technician who diagnoses, plans cultural fixes, and uses chemicals as one tool among several \u2014 that is professional weed control.",
-      },
-      {
-        id: "wc6",
-        title: "Cultural Control \u2014 The Most Powerful Tool",
-        duration: "12 min",
-        content:
-          "Cultural control means changing how the lawn is managed so the grass wins on its own.\n\n**Mowing height** \u2014 most UK lawns should be cut at 25–40mm. Cutting shorter scalps the grass, lets light reach weed seeds, and favours low creeping weeds.\n\n**Feeding** \u2014 a balanced fertiliser programme thickens the sward. Clover and yarrow noticeably retreat once nitrogen is restored.\n\n**Aeration** \u2014 relieves compaction so grass roots can breathe; weeds that thrive on compaction lose their advantage.\n\n**Overseeding** \u2014 fills gaps before weeds can. Always pair renovation work with overseeding.\n\n**Scarification** \u2014 removes thatch and moss; must be followed by overseeding or you simply create germination beds for weeds.\n\n**The cultural control rule:** every weed treatment job should be paired with at least one cultural recommendation.",
-      },
       {
         id: "wc7",
         title: "Mechanical and Manual Control",
@@ -1965,5 +1923,109 @@ export const trainingModules: TrainingModule[] = [
           "Heat stress and drought stress frequently co-occur \u2014 UK summers combine low rainfall with temperatures that can exceed 30°C. Understanding what happens at the cellular level during heat stress explains why recovery programmes matter as much as the immediate response.\n\n## What heat stress does to grass cells\n\nAbove approximately **35\u201338°C** (leaf temperature, not air temperature \u2014 leaf temperature can exceed air temperature by 5\u201310°C in direct sunlight), proteins begin to denature \u2014 they lose their three-dimensional shape and stop functioning.\n\n**Key proteins affected:**\n- **Photosynthetic enzymes** (Rubisco, ATP synthase): photosynthesis efficiency drops sharply above 35°C\n- **Membrane proteins**: cell membranes become leaky as temperature disrupts the lipid bilayer structure\n- **Metabolic enzymes**: general cellular metabolism slows as enzyme function is impaired\n\n## Heat shock proteins\n\nPlants (and all organisms) respond to heat stress by upregulating **heat shock proteins (HSPs)**. These molecular chaperones:\n- Bind to partially denatured proteins and help them refold correctly\n- Prevent aggregation of damaged proteins\n- Are produced within minutes of heat exposure\n\nGrass species with more efficient HSP production recover faster from heat stress. This is a key differentiator between heat-tolerant and heat-sensitive grass cultivars.\n\n## Recovery \u2014 what supports it\n\nAfter heat and drought stress, recovery is driven by:\n- **Moisture restoration** \u2014 rehydrates cells and allows turgor restoration\n- **Moderate temperature** \u2014 enzyme systems re-activate; photosynthesis resumes\n- **Available nitrogen** \u2014 resynthesises chlorophyll and builds new tissue\n- **Potassium availability** \u2014 restores osmotic regulation and membrane function\n\n**Avoid immediately after heat/drought stress:**\n- Heavy nitrogen application \u2014 stimulates growth the damaged root system can't support; increases disease risk\n- Mowing too soon \u2014 let the grass recover turgor before cutting; mowing mechanically stressed turf delays recovery\n\n[tip]\nAfter a prolonged drought break, advise customers to water first and wait two weeks before any treatment application. The lawn needs to restore structure before it can effectively absorb and respond to nutrients. A single deep watering session immediately after rainfall helps accelerate root rehydration.\n[/tip]",
       }
     ],
+  },
+
+  {
+    id: "weed-knowledge",
+    title: "Weed Knowledge \u2014 Understanding and Identification",
+    description: "What weeds are, how they live and spread, identification of the most common UK lawn weeds, root causes of weed pressure, integrated management principles and cultural control.",
+    icon: "Search",
+    emoji: "\uD83D\uDD0D",
+    category: "Weed Management",
+    estimatedTime: "1 h 5 min",
+    roles: ["technician"],
+    stage: "advanced-operations",
+    lessons: [
+      {
+        id: "wc1",
+        title: "What a Weed Actually Is",
+        duration: "10 min",
+        content:
+          "A weed is simply a plant growing where it is not wanted. There is nothing biologically special about a 'weed' \u2014 a wildflower in a meadow can become a weed on a customer's lawn.\n\n**Three things make a plant a problem in turf:**\n1. It out-competes the grass for light, water or nutrients\n2. It looks visually disruptive (yellow flowers, broad leaves, bare patches around it)\n3. It spreads quickly if left alone\n\nUnderstanding 'why this is a weed here' is the start of every good treatment decision.",
+      },
+      {
+        id: "wc2",
+        title: "How Weeds Live and Spread",
+        duration: "12 min",
+        content:
+          "Weeds are grouped by their life cycle:\n\n**Annuals** \u2014 germinate, flower, seed and die in a single year (e.g. annual meadow grass, chickweed). Best controlled before they set seed.\n\n**Biennials** \u2014 grow leaves in year one, flower and seed in year two. Hit them in year one while they're still a rosette.\n\n**Perennials** \u2014 live for many years and regrow from roots, runners or rhizomes (e.g. dandelion, plantain, clover). These are the bulk of lawn weeds and the hardest to kill.\n\n**How they spread:**\n- Seed \u2014 wind, mowers, shoes, birds, soil disturbance\n- Stolons (above-ground runners) \u2014 clover, creeping buttercup\n- Rhizomes (underground stems) \u2014 couch grass, yarrow\n- Tap roots \u2014 dandelion, dock \u2014 break the root and you get two plants\n\n**The seed bank rule:** every soil contains thousands of dormant weed seeds per square metre. You are never 'clearing' the seed bank \u2014 you are managing what germinates.",
+      },
+      {
+        id: "wc3",
+        title: "Identifying the Common UK Lawn Weeds",
+        duration: "15 min",
+        content:
+          "**Broadleaf perennials (most common):**\n- Dandelion \u2014 deep tap root, jagged leaves, yellow flower, parachute seeds\n- Daisy \u2014 small rosettes, white-petal flower, spreads by runners\n- Plantain (greater & ribwort) \u2014 flat ribbed leaves, very tough\n- White clover \u2014 three-leaf trefoil, white flower, nitrogen-fixing\n- Creeping buttercup \u2014 glossy lobed leaves, runners, loves wet compacted ground\n- Self-heal \u2014 low purple flower spikes, mat-forming\n- Yarrow \u2014 feathery leaves, drought-tolerant, hard to kill\n- Speedwell \u2014 tiny blue flowers, mat-forming, notoriously herbicide-resistant\n- Mouse-ear chickweed \u2014 hairy small leaves, low rosettes\n\n**Grass weeds:**\n- Annual meadow grass (Poa annua) \u2014 pale, seeds at very low height, almost universal\n- Yorkshire fog \u2014 soft, hairy, grey-green tufts\n- Couch grass \u2014 coarse blades, aggressive rhizomes\n\n**Moss** \u2014 not a weed in the herbicide sense, but treated as one. A symptom of shade, wet, low fertility, scalping or compaction.",
+      },
+      {
+        id: "wc4",
+        title: "Why Weeds Appear \u2014 Root Causes",
+        duration: "10 min",
+        content:
+          "Spraying without fixing the cause means the same weeds return every season. Always ask: why is this lawn vulnerable?\n\n**Common underlying causes:**\n- Thin or sparse grass \u2014 bare soil invites weed seeds\n- Low fertility \u2014 clover and yarrow thrive where grass is starved\n- Compaction \u2014 plantain, buttercup, annual meadow grass love hard ground\n- Poor drainage \u2014 moss, buttercup, sedges\n- Scalping \u2014 weakens grass, lets low-growing weeds take over\n- Shade \u2014 moss and woodland weeds dominate\n- Recent disturbance \u2014 renovation brings buried seeds to the surface\n\n**The professional mindset:** weed control + lawn improvement always go together. Treatment kills what's there now; dense healthy grass is what stops the next wave.",
+      },
+      {
+        id: "wc5",
+        title: "Integrated Weed Management",
+        duration: "12 min",
+        content:
+          "Integrated Weed Management (IWM) combines several methods so you rely less on any single one \u2014 especially chemicals.\n\n**The four pillars:**\n1. Cultural control \u2014 mowing height, feeding, watering, overseeding, aeration, scarification\n2. Mechanical / physical control \u2014 hand-pulling, hoeing, removing seed heads\n3. Biological control \u2014 encouraging grass to out-compete weeds\n4. Chemical control \u2014 selective herbicides when other methods aren't enough\n\nA technician who reaches for the sprayer first is not yet a professional. A technician who diagnoses, plans cultural fixes, and uses chemicals as one tool among several \u2014 that is professional weed control.",
+      },
+      {
+        id: "wc6",
+        title: "Cultural Control \u2014 The Most Powerful Tool",
+        duration: "12 min",
+        content:
+          "Cultural control means changing how the lawn is managed so the grass wins on its own.\n\n**Mowing height** \u2014 most UK lawns should be cut at 25–40mm. Cutting shorter scalps the grass, lets light reach weed seeds, and favours low creeping weeds.\n\n**Feeding** \u2014 a balanced fertiliser programme thickens the sward. Clover and yarrow noticeably retreat once nitrogen is restored.\n\n**Aeration** \u2014 relieves compaction so grass roots can breathe; weeds that thrive on compaction lose their advantage.\n\n**Overseeding** \u2014 fills gaps before weeds can. Always pair renovation work with overseeding.\n\n**Scarification** \u2014 removes thatch and moss; must be followed by overseeding or you simply create germination beds for weeds.\n\n**The cultural control rule:** every weed treatment job should be paired with at least one cultural recommendation.",
+      },
+    ],
   }
+,
+
+  {
+    id: "lawn-disease-recognition",
+    title: "Lawn Disease Recognition in the Field",
+    description: "How to distinguish disease from disorder, identify Red Thread and Fusarium Patch with confidence, recognise rust, dollar spot and fairy rings, and respond professionally on the doorstep.",
+    icon: "Eye",
+    emoji: "\uD83E\uDE7A",
+    category: "Disease Management",
+    estimatedTime: "27 min",
+    roles: ["technician"],
+    stage: "systems-workflows",
+    lessons: [
+      {
+        id: "ldr-biotic",
+        title: "Disease vs Disorder — Knowing the Difference",
+        section: "Foundations",
+        duration: "6 min",
+        content:
+          "When a technician encounters a problem lawn, the first question is always: is this caused by a living organism (biotic) or by an environmental or nutritional factor (abiotic)? Getting this distinction right determines every subsequent decision.\n\n## Biotic problems \u2014 caused by living pathogens\n\nA biotic problem involves a pathogen \u2014 most commonly a fungal organism \u2014 actively infecting and damaging the grass plant. Key characteristics:\n\n- **Identifiable progression**: the damage spreads or changes over time in a consistent pattern\n- **Mycelium or spores may be visible**: fine threads, powder or pustules on or around the affected grass\n- **Shape and distribution**: often patches, rings or streaks; rarely completely uniform\n- **Seasonal timing**: most diseases have a season \u2014 Red Thread in warm, humid summers; Fusarium in cold, wet autumns/winters\n\nCommon biotic problems you'll encounter: Red Thread, Fusarium Patch, Rust, Leaf Spot, Dollar Spot, Take-All Patch.\n\n## Abiotic problems \u2014 caused by environment or nutrition\n\nAn abiotic problem has no pathogen involved. The grass is being damaged by its conditions, not by infection. Characteristics:\n\n- **Pattern often follows environment**: dry areas on slopes, waterlogged hollows, shade edges, compacted zones\n- **No mycelium or spores**\n- **Responds to correcting the underlying cause** (watering, feeding, aeration) not to fungicide\n\nCommon abiotic problems: drought stress, nitrogen deficiency, iron chlorosis, waterlogging, compaction, frost damage, dog urine scorch.\n\n## Why this matters practically\n\nApplying fungicide to an abiotic problem wastes money and does nothing. Feeding a diseased lawn with high nitrogen when it already has Fusarium makes the disease dramatically worse (Fusarium thrives on lush, soft growth). The initial biotic/abiotic triage changes everything.\n\n[tip]\nFirst observation rule: get down to lawn level and look at the affected area from a low angle in the morning. Biotic problems often show mycelium \u2014 visible only in the early morning when dew is present. If you see fine threads (especially pink or white), you have a fungal disease.\n[/tip]",
+      },
+      {
+        id: "ldr-red-thread",
+        title: "Red Thread and Fusarium — The Two You'll See Most",
+        section: "Key Diseases",
+        duration: "8 min",
+        content:
+          "Red Thread and Fusarium Patch are the two diseases you'll encounter most frequently in UK domestic lawn care. Confident identification of both is essential.\n\n## Red Thread (Laetisaria fuciformis)\n\n**When it appears**: warm, humid weather \u2014 typically late spring through early autumn; peak in July\u2013September. Does NOT require standing water.\n\n**Visual ID:**\n- Irregular pink-red patches, typically 5\u201325cm diameter\n- The diagnostic feature: **red needle-like threads** (Coral fungal strands) protruding 1\u20132cm from the leaf tips; visible to the naked eye in dry conditions\n- In very humid conditions, fluffy pink mycelium is visible at patch edges in the morning\n- The grass within the patch is bleached/tan, not slimy\n\n**What conditions trigger it**: low nitrogen, humid air, moderate temperatures (15\u201325°C). It is almost always associated with under-fed lawns.\n\n**Response:**\n- Nitrogen application is the first treatment \u2014 Red Thread is rarely severe enough in domestic lawns to require fungicide\n- The grass recovers; the red threads fall away as nitrogen greens the sward\n- Fungicide only if the problem is persistent or very extensive\n\n## Fusarium Patch / Snow Mould (Microdochium nivale)\n\n**When it appears**: autumn through winter and early spring \u2014 particularly after high-nitrogen autumn feeding, in humid conditions, or after snow cover.\n\n**Visual ID:**\n- Water-soaked, orange-brown patches, 2\u201330cm diameter, expanding from a central point\n- In moist conditions, **white or pale pink cottony mycelium** at the patch edge \u2014 diagnostic\n- Grass in the patch is slimy and matted, not just bleached\n- Can merge into large irregular areas if untreated in a wet autumn\n\n**What conditions trigger it**: cool temperatures (2\u201315°C), high humidity, high nitrogen (particularly after autumn nitrogen excess), poor air circulation, heavy thatch.\n\n**Response:**\n- Cultural: avoid high-nitrogen autumn treatments; reduce thatch; improve drainage\n- Fungicide: effective if applied early in disease development \u2014 contact fungicides (propiconazole, iprodione) or systemic products\n- Do not mow when disease is active \u2014 spreads spores\n\n[warning]\nFusarium is the most serious disease you'll regularly encounter on domestic lawns. In a bad autumn, an untreated lawn can lose 30\u201340% of its surface to Fusarium Patch. Early identification and prompt action (or customer advisory) is important.\n[/warning]",
+      },
+      {
+        id: "ldr-rust-other",
+        title: "Rust, Dollar Spot and Other Conditions to Recognise",
+        section: "Key Diseases",
+        duration: "7 min",
+        content:
+          "Beyond Red Thread and Fusarium, several other diseases and conditions appear regularly in UK domestic lawns. Knowing what they look like prevents misidentification and unnecessary or incorrect treatment.\n\n## Rust (Puccinia spp.)\n\n**When it appears**: late summer into autumn, particularly after a dry summer followed by cool, moist conditions. Most common on perennial ryegrass cultivars.\n\n**Visual ID:**\n- **Orange or yellow powdery pustules** covering the leaf blade \u2014 easily rubbed off on a finger\n- In heavy infections, the lawn appears orange-yellow from a distance\n- Individual leaves show elongated orange pustules when examined closely\n\n**What to tell a customer**: Rust is disfiguring but not usually lawn-threatening. It's most common on stressed or slow-growing grass \u2014 improving nitrogen and mowing to remove infected leaf tips resolves most cases. Fungicide is rarely warranted on domestic lawns.\n\n## Dollar Spot (Clarireedia jacksonii)\n\n**When it appears**: warm, humid weather with cool nights (characteristic dew); increasingly common in the UK with warmer summers.\n\n**Visual ID:**\n- Small (5\u201310cm), straw-coloured circular spots, each about the diameter of a coin \u2014 hence the name\n- In the morning dew, **white cottony mycelium** across the affected spots\n- Multiple spots may coalesce as the disease progresses\n- Individual leaf blades show a tan lesion with a reddish-brown margin\n\n**What triggers it**: low nitrogen, dew, low mowing, poor air circulation.\n\n## Fairy Ring (various Basidiomycetes)\n\n**Visual ID:** One of three types:\n- **Type 1**: ring of dead or depressed grass\n- **Type 2**: ring of stimulated, darker green grass\n- **Type 3**: ring of fruiting bodies (mushrooms/toadstools) only, no grass damage\n\nType 1 is the most problematic \u2014 caused by fungal mycelium making the soil hydrophobic (repels water). No chemical treatment is registered as reliably effective. Hollow-tine aeration + wetting agent application + irrigation is the practical management approach.\n\n[note]\nA customer will often describe 'dark green rings' and assume something is wrong. Type 2 and Type 3 fairy rings are not harming the lawn \u2014 the stimulated green ring is caused by nitrogen released by the fungal decomposition of organic matter. Reassure accordingly.\n[/note]",
+      },
+      {
+        id: "ldr-response",
+        title: "What to Do When You Spot a Disease",
+        section: "Field Response",
+        duration: "6 min",
+        content:
+          "Field identification is only the first step. What happens next \u2014 what you do, what you say to the customer, and what you record \u2014 matters just as much as getting the diagnosis right.\n\n## Step 1: Confirm it's biotic\n\nBefore assuming disease, rule out the obvious abiotic causes:\n- Is this the pattern of drought, compaction or poor drainage?\n- Is there evidence of dog urine (round patches with green ring)?\n- Is there a recent treatment that could have caused chemical scorch?\n\nIf the pattern, timing and visual features all point to disease, proceed to identification.\n\n## Step 2: Don't touch the affected area unnecessarily\n\nFungal spores spread via mowing equipment, boots and hands. If you're walking through the affected patch, you're distributing spores across the rest of the lawn. Avoid unnecessary contact and clean boots before moving to another garden.\n\n## Step 3: Photograph and record\n\nAlways photograph a disease occurrence:\n- Overall patch \u2014 showing size, shape, distribution\n- Close-up \u2014 showing mycelium, pustules, thread structures or leaf symptoms\n- Note the date, conditions (recent weather, recent treatments), and your diagnosis\n\nThis record protects you, informs the next technician, and allows the office to track disease patterns.\n\n## Step 4: Tell the customer clearly and calmly\n\nMost customers panic at the word 'disease.' Frame it helpfully:\n- Name the disease and explain it's common and manageable\n- Explain what triggered it (usually nutritional or environmental) \u2014 this avoids implying you caused it\n- Give a clear next step: 'We'll increase the nitrogen to address this' or 'We'd recommend a fungicide application \u2014 I'll flag it to the office'\n\n## Step 5: Know when to escalate\n\nEscalate to the office or senior technician when:\n- The disease is unidentified or unusual\n- The damage is extensive (>25% of the lawn surface)\n- The customer is distressed or asking for a specific treatment commitment\n- The disease has appeared immediately after one of your treatments (defensive recording is important here)\n\n[tip]\nThe most professional response to disease discovery is a calm, specific, solutions-focused conversation. Avoid vague language ('it's got something on it') or panic. Customers remember how you handle it, not just what the problem was.\n[/tip]",
+      }
+    ],
+  }
+
 ];
