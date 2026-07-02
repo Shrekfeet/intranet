@@ -2051,5 +2051,60 @@ id: "weed-control-mastery",
       }
     ],
   }
+,
+
+  {
+    id: "van-care",
+    title: "Van Care, Safety and Professional Use",
+    description: "How to look after your company vehicle, what dash cams and GPS tracking record, daily checks, road standards, and loading and chemical storage requirements.",
+    icon: "Truck",
+    emoji: "🚐",
+    category: "Vehicle Standards",
+    estimatedTime: "27 min",
+    roles: ["technician"],
+    stage: "role-foundations",
+    lessons: [
+      {
+        id: "van-mindset",
+        title: "Your Van — Not Yours, But Yours to Look After",
+        section: "The Right Mindset",
+        duration: "5 min",
+        content:
+          "The van parked outside a customer's house is often the first physical impression Shrekfeet makes. Before the doorbell is rung, before a word is spoken, the state of the vehicle has already said something about the company. It needs to say the right thing.\n\n## A company asset, not a personal vehicle\n\nThe van isn't yours \u2014 it belongs to the business. That means every scratch, every piece of rubbish left in the cab, every shortcut taken with maintenance, costs the business money and reflects on everyone who works here. Treat it accordingly.\n\nThis isn't about being precious. It's about professional pride and basic respect for something you've been trusted with. Most people wouldn't leave food wrappers in a hire car or let the fuel run to zero in a borrowed vehicle. Apply that same standard here, every day.\n\n## What it says about you\n\nA clean, well-presented van signals a professional technician. Customers notice. A muddy, cluttered van with a cracked bumper and a random assortment of personal belongings visible through the windows signals the opposite \u2014 and that impression sticks.\n\nYou represent Shrekfeet from the moment you pull up. The van is part of that representation.\n\n## The simple standard\n\n- Keep the cab tidy \u2014 no food waste, no unnecessary personal items, no clutter on the dashboard\n- Keep the exterior clean \u2014 the company will arrange washes but you're responsible for flagging when it's needed\n- Report any damage, however minor, immediately \u2014 do not wait to see if anyone notices\n- Never use the van for personal errands or journeys outside of work duties without prior approval\n\n[tip]\nThe easiest way to think about it: if you borrowed a van from a friend who had lent it to you in good faith, how would you return it? That's the standard.\n[/tip]",
+      },
+      {
+        id: "van-road",
+        title: "On the Road — Rules, Standards and Common Sense",
+        section: "On the Road",
+        duration: "6 min",
+        content:
+          "A Shrekfeet van on public roads is a moving advertisement for the company. Every other road user who sees it \u2014 and every customer who watches it arrive and leave \u2014 is forming an opinion.\n\n## Legal requirements\n\nThese are non-negotiable and the responsibility of the driver:\n\n- **Speed limits**: obey all posted limits at all times. Speeding fines and penalty points are the driver's responsibility, not the company's. Any fixed penalty notice received while driving a company vehicle will be passed to the named driver.\n- **Mobile phones**: it is illegal to use a hand-held phone while driving. This includes texting, checking maps, answering calls without a hands-free kit. Pull over safely if you need to use your phone. A hands-free kit is provided in the van \u2014 use it.\n- **Seatbelt**: always worn. Every journey, no exceptions.\n- **Drink and drugs**: absolute zero tolerance. Driving a company vehicle while impaired will result in immediate dismissal.\n\n## Standards beyond the legal minimum\n\nFollowing the law is the floor, not the ceiling. We also expect:\n\n- **Considerate parking**: park where you won't inconvenience neighbours, block driveways or cause hazards. If parking is difficult, take a moment to choose well rather than just stopping wherever is easiest.\n- **Courteous driving**: no aggressive overtaking, no tailgating, no horn unless genuinely necessary. Road rage in a branded van is a PR incident.\n- **Appropriate speed for conditions**: the limit is a maximum, not a target. Drive to the conditions.\n\n## Incidents and accidents\n\nIf you are involved in any incident \u2014 however minor \u2014 while driving a company vehicle:\n1. Ensure the scene is safe\n2. Photograph the damage and the other vehicle's plate if involved\n3. Exchange details if another party is involved\n4. Report to the office **the same day**, regardless of how minor it seems\n\n[warning]\nFailing to report an incident, even a minor parking scrape, is considered a disciplinary matter. The sooner it's reported, the easier it is to handle. Delayed reporting always makes things worse.\n[/warning]",
+      },
+      {
+        id: "van-tracking",
+        title: "Dash Cams and Vehicle Tracking — What's Recorded and Why",
+        section: "Monitoring Systems",
+        duration: "6 min",
+        content:
+          "All company vans are fitted with dash cameras and GPS tracking. This lesson explains exactly what is recorded, how it is used, and what the policy is around these systems.\n\n## Dash cameras\n\nEvery van has a dash cam recording continuously while the engine is running. Most also record when the vehicle is parked (with motion detection).\n\n**What the footage is used for:**\n- Incident investigation \u2014 if there is a road traffic incident, the footage protects you as much as it protects the company. In the majority of cases, dash cam footage has exonerated drivers from false claims made by other road users\n- Complaint investigation \u2014 if a customer or member of the public makes a complaint about driving behaviour, footage allows the company to investigate fairly\n- Periodic review of driving standards as part of staff development\n\n**What it is not used for:**\nRoutine surveillance of your personal conversations or movements during breaks. Footage is only reviewed when there is a specific reason to do so.\n\n## GPS vehicle tracking\n\nEvery van's location is logged continuously throughout the working day. This data is used to:\n\n- **Log start and finish times**: when the van first moves in the morning and when it returns or parks up for the end of the day is how we confirm working hours for payroll and scheduling\n- **Monitor route efficiency**: the routing data helps the operations team improve job scheduling\n- **Customer verification**: if there is a query about whether a visit took place or when it occurred, GPS data provides an accurate record\n\n## The policy on tampering\n\n[alert]\nTampering with, covering, disabling or attempting to interfere with a dash camera or GPS tracker in any way is a serious disciplinary offence and will result in immediate dismissal. These systems exist to protect you, the company and the public. There is no legitimate reason to interfere with them.\n[/alert]\n\n## The practical takeaway\n\nDrive as if someone whose opinion of you matters is watching \u2014 because the record exists. If you're driving professionally, following the rules and behaving sensibly, these systems are entirely on your side.",
+      },
+      {
+        id: "van-checks",
+        title: "Daily Checks and Keeping the Van in Good Order",
+        section: "Vehicle Maintenance",
+        duration: "5 min",
+        content:
+          "You don't need to be a mechanic to keep a company van in good working order. You do need to spend 2 minutes before every shift confirming the basics. Catching a problem before it causes a breakdown or an accident is everyone's responsibility.\n\n## The pre-drive check \u2014 do this every morning\n\nWalk around the vehicle before you get in:\n\n**Tyres**\n- Check for obvious flats or damage\n- Tyre pressure gauges are available in the van \u2014 check pressure weekly as a minimum\n- Minimum legal tread depth is 1.6mm across the central three-quarters of the tyre. If you're unsure, report it\n\n**Lights**\n- Confirm headlights, brake lights and indicators are working (ask someone to check brake lights if you're alone, or use a reflection)\n- A blown bulb is a fixed penalty notice waiting to happen\n\n**Windscreen**\n- Check for cracks or chips. A small chip can be repaired cheaply; left to spread it becomes a full windscreen replacement\n- Report any new damage immediately\n\n**Fluid levels** (check weekly, or flag to the office if warning lights appear)\n- Engine oil\n- Coolant\n- Washer fluid \u2014 particularly important in winter\n\n## Reporting faults\n\nIf anything is wrong \u2014 a warning light on the dashboard, a noise that wasn't there yesterday, a tyre that seems low, a door that doesn't close properly \u2014 report it to the office the same day. Do not wait for the next service.\n\n[note]\nWarning lights should never be ignored or covered. Some are advisory (a minor issue to monitor); some indicate immediate action is needed. If you're unsure what a dashboard warning light means, photograph it and call the office.\n[/note]\n\n## Keeping it clean\n\n- Remove any rubbish from the cab at the end of every working day\n- Wipe down surfaces if product or soil has been tracked in\n- Report when the van needs an external wash rather than waiting for it to be noticed",
+      },
+      {
+        id: "van-loading",
+        title: "Loading, Equipment and Safe Transportation",
+        section: "Equipment and Loading",
+        duration: "5 min",
+        content:
+          "The way equipment and chemicals are loaded into a van affects safety on the road, the condition of the products when they arrive, and the legal compliance of the vehicle. This isn't optional.\n\n## Securing equipment properly\n\nUnsecured equipment in a moving vehicle is a hazard. In an emergency stop, a loose spreader, backpack sprayer or box of granules becomes a projectile. More practically, unsecured equipment bouncing around in the rear of the van causes damage to the equipment and the vehicle.\n\n- Spreaders and sprayers must be secured against movement \u2014 use the racking and securing points provided\n- Boxes of granular product must be stacked stably and not top-heavy\n- Liquid products must be upright and sealed \u2014 never transported on their side\n- Loose small items (funnels, gloves, hand tools) belong in the storage containers provided, not loose in the load area\n\n## Chemical storage in the van\n\nPesticide and fertiliser products have specific storage requirements:\n\n- **Do not leave pesticide products in a hot van overnight or over the weekend.** Heat degrades some active ingredients and high temperatures can cause container distortion or pressure build-up in liquid products\n- Products must be in their original, labelled containers at all times \u2014 decanting into unlabelled containers is illegal under COSHH regulations\n- Any spill in the load area must be cleaned up immediately \u2014 do not allow product residue to accumulate\n- PPE required for handling the products must be in the van before you carry those products\n\n## Locking and security\n\n- Lock the van every time you leave it, even briefly\n- Do not leave pesticide products, valuable equipment or the company fuel card visible or accessible in an unattended van\n- If you need to leave the van unattended for an extended period (lunch break, etc.), ensure all equipment is secured in the locked load area, not the cab\n\n[tip]\nAt the start of each week, check your van stock against your job list. Running out of a product mid-route is avoidable with 5 minutes of planning. Report low stock to the office in advance \u2014 do not wait until you've run out.\n[/tip]",
+      }
+    ],
+  }
 
 ];
